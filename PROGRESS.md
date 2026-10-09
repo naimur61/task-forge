@@ -34,6 +34,12 @@ Workflow per stage: `git checkout -b <branch>` → build → `npm run typecheck 
 - [x] 11. `feat/skeletons`: boneyard-js bones for 13 loading surfaces, registry imported in providers. Refresh with `npm run bones` (dev server on :3000)
 - [x] 12. `feat/command-palette`: Cmd+K palette, keyboard shortcuts (c, /, g d, ?)
 - [x] 13. `test/unit`: Vitest, 27 tests in `tests/unit/` (permissions, schemas + converters, due dates, mock API auth/filters/403/404/422). Run `npm test`
-- [ ] 14. `docs/readme`: README (features, demo logins, switch to real backend, architecture, decisions)
+- [x] 14. `docs/readme`: README (features, demo logins, backend contract, structure, decisions), screenshots in `docs/screenshots/`, production build passes, dashboard charts lazy-loaded
+
+## Next ideas (not started)
+- Real-time updates over socket.io (patch React Query caches on `task.updated`, `comment.added`, `member.removed`)
+- Playwright e2e for the main flows, Lighthouse/a11y audit
+- Labels management UI, file attachments, bulk actions
 
 ## Notes
+- Untracked `public/planning.png`, `public/prioritize.png` and the modified `public/favicon.ico` were added outside these stages and are left for the owner to commit.
