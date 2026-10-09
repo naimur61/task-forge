@@ -1,6 +1,7 @@
 import { can, canDeleteTask, canEditTask } from '@/lib/permissions';
 import type { TaskPriority, TaskStatus } from '@/types/task';
 import { db, newId, now, type TaskRow } from '../db';
+import { notifyUser } from '../realtime';
 import {
   byNewest,
   fail,
@@ -30,6 +31,16 @@ function loadTask({ userId, params }: MockContext) {
   const task = db.tasks.find((t) => t.id === params.taskId && t.projectId === params.projectId);
   if (!member || !task) return { error: notFound('Task') };
   return { member, task };
+}
+
+/** Tell the assignee (if it's someone else) that the task is now theirs. */
+function notifyAssignee(task: TaskRow, actorId: string): void {
+  if (!task.assigneeId || task.assigneeId === actorId) return;
+  const actor = db.users.find((u) => u.id === actorId)?.name ?? 'Someone';
+  const message = `${actor} assigned you "${task.title}"`;
+  const link = `/projects/${task.projectId}/list?task=${task.id}`;
+  db.notifications.push({ id: newId('ntf'), userId: task.assigneeId, type: 'task.assigned', message, link, readAt: null, createdAt: now() });
+  notifyUser(task.assigneeId, actorId, message, task.projectId);
 }
 
 /** Archived projects are read-only. */
@@ -155,6 +166,7 @@ export const taskRoutes: MockRoute[] = [
       };
       db.tasks.push(task);
       logActivity(params.projectId, userId, 'task.created', `created "${task.title}"`);
+      notifyAssignee(task, userId);
       return ok(toTask(task), undefined, 201);
     },
   },
@@ -182,6 +194,7 @@ export const taskRoutes: MockRoute[] = [
       if (body.description !== undefined) task.description = body.description || null;
       if (body.priority !== undefined) task.priority = body.priority;
       if (body.dueDate !== undefined) task.dueDate = body.dueDate || null;
+      const previousAssignee = task.assigneeId;
       if (body.assigneeId !== undefined) task.assigneeId = body.assigneeId || null;
       if (Array.isArray(body.labelIds)) task.labelIds = body.labelIds;
       if (body.status !== undefined && body.status !== task.status) {
@@ -193,6 +206,7 @@ export const taskRoutes: MockRoute[] = [
         logActivity(task.projectId, userId, 'task.updated', `updated "${task.title}"`);
       }
       task.updatedAt = now();
+      if (task.assigneeId !== previousAssignee) notifyAssignee(task, userId);
       return ok(toTask(task));
     },
   },
