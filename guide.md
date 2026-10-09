@@ -1,0 +1,77 @@
+# taskforge — conventions
+
+How code is organized in this project. Keep to it so the codebase stays predictable.
+
+## Pages: page → container → components
+
+```
+src/app/orders/
+├── page.tsx               # server component, renders the container — nothing else
+├── orders-container.tsx   # state, data fetching, composition
+└── service.ts             # API calls used by the container (optional)
+src/components/features/orders/
+└── widget.tsx             # components for this feature
+```
+
+`page.tsx`:
+
+<!-- illustrative -->
+```tsx
+import OrdersContainer from './orders-container';
+
+export default function OrdersPage() {
+  return <OrdersContainer />;
+}
+```
+
+`orders-container.tsx`:
+
+<!-- illustrative -->
+```tsx
+'use client';
+import { Widget } from '@/components/features/orders/widget';
+
+export default function OrdersContainer() {
+  return <Widget />;
+}
+```
+
+- `page.tsx` never has `'use client'` or state; it may export `metadata`.
+- Feature components live in `src/components/features/{feature}/`.
+- Domain-agnostic components → `src/components/common/`; design-system primitives → `src/components/ui/`.
+- Hooks, stores, API clients, types and providers live under `src/`, never inside `src/app/`.
+
+## Buttons: only `ActionButton` inside `src/app/`
+
+```tsx
+import { ActionButton } from '@/components/common/button';
+
+<ActionButton handleOpen={onSave} isPending={saving}>Save</ActionButton>
+<ActionButton variant="outline" size="sm" icon={<Plus />}>Add</ActionButton>
+<ActionButton type="submit" fullWidth loadingContent="Saving…" isPending={saving}>Save</ActionButton>
+```
+
+Variants: `default` · `destructive` · `outline` · `secondary` · `ghost` · `link`. Sizes: `xs` · `sm` · `default` · `lg` · `xl`.
+Raw `<button>` and the `ui/button` primitive are for building components inside `src/components/` only.
+
+## Forms
+
+- Schemas (zod) next to the feature or in `src/components/common/forms/schemas/`.
+- `useZodForm(schema, options)` from `@/components/common/forms/hooks/use-form`.
+- Inputs are `CustomField.*` (`Text`, `Password`, `Number`, `SelectField`, …): pass `form` + `name` to bind them, or `value` + `setValue` to use them standalone.
+- Keep `File` objects out of form state — store URLs/ids and upload separately.
+
+## File names
+
+kebab-case everywhere. Components are PascalCase exports.
+
+**The folder names the role, and the file names the thing.** Never repeat the role as a suffix (`.type`, `.schema`, `.service`, ...).
+
+| Kind | Example |
+|---|---|
+| Types | `src/types/order.ts` (not `order.type.ts`) |
+| Zod schemas | `src/components/common/forms/schemas/order.ts` |
+| Hooks | `src/hooks/api-hooks/use-fetch-data.ts` |
+| Mock data | `src/mocks/data/orders.json` |
+
+Exceptions: `*-container.tsx` and `service.ts` sit next to `page.tsx` in the same folder, so they keep their names. Next.js reserved names (`page.tsx`, `layout.tsx`, `route.ts`) and `*.d.ts` stay as they are.

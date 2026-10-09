@@ -1,0 +1,4 @@
+# Same checks as CI. Skip once with: git push --no-verify
+npm run typecheck
+npm run lint
+npm run build

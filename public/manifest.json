@@ -1,0 +1,16 @@
+{
+  "name": "Nexstruct Project",
+  "short_name": "Nexstruct",
+  "description": "Production-ready Next.js project scaffolded with Nexstruct",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}
