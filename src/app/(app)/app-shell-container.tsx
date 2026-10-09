@@ -7,16 +7,21 @@ import GlobalLoader from '@/components/common/global-loader/global-loader';
 import { AppLayout } from '@/components/layouts/app-layout';
 import { NotificationBell } from '@/components/features/notifications/notification-bell';
 import { PaletteTrigger } from '@/components/features/command-palette/palette-trigger';
+import { LiveStatus } from '@/components/features/realtime/live-status';
+import { RealtimeProvider, useRealtime } from '@/providers/realtime-provider';
 import { useUiStore } from '@/store/zustand/ui';
 import type { Notification } from '@/types/notification';
 import { useMarkAllNotificationsRead, useMarkNotificationRead, useNotifications } from './service';
 import CommandCenterContainer from './command-center-container';
+import RealtimeContainer from './realtime-container';
 
 /** Signed-in shell: waits for the session, then shows sidebar + top bar around the page. */
 export default function AppShellContainer({ children }: { children: ReactNode }) {
   return (
     <RequireAuth fallback={<GlobalLoader />}>
-      <Shell>{children}</Shell>
+      <RealtimeProvider>
+        <Shell>{children}</Shell>
+      </RealtimeProvider>
     </RequireAuth>
   );
 }
@@ -27,6 +32,7 @@ function Shell({ children }: { children: ReactNode }) {
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
   const setCommandOpen = useUiStore((state) => state.setCommandOpen);
+  const { isConnected } = useRealtime();
 
   const openNotification = (notification: Notification) => {
     if (!notification.readAt) markRead.mutate(notification.id);
@@ -37,6 +43,7 @@ function Shell({ children }: { children: ReactNode }) {
     <AppLayout
       headerActions={
         <>
+          <LiveStatus isConnected={isConnected} />
           <PaletteTrigger onOpen={() => setCommandOpen(true)} />
           <NotificationBell
             notifications={notifications.data?.data ?? []}
@@ -50,6 +57,7 @@ function Shell({ children }: { children: ReactNode }) {
     >
       {children}
       <CommandCenterContainer />
+      <RealtimeContainer />
     </AppLayout>
   );
 }
