@@ -26,14 +26,15 @@ export const Password = ({
     ? placeholder || labelName
     : LabelAndPlaceholderTextFormat(placeholder || labelName || '');
 
-  const renderStrengthRules = () => {
-    if (mode !== 'validate' || !passwordValue) return null;
-    if (passwordRules.every((rule) => rule.test(passwordValue))) return null;
+  /** Strength checklist for `value` (only in mode="validate"). */
+  const renderStrengthRules = (value: string) => {
+    if (mode !== 'validate' || !value) return null;
+    if (passwordRules.every((rule) => rule.test(value))) return null;
 
     return (
       <ul className="mt-2 space-y-1 text-sm">
         {passwordRules.map((rule, index) => {
-          const passed = rule.test(passwordValue);
+          const passed = rule.test(value);
           return (
             <li
               key={index}
@@ -105,8 +106,9 @@ export const Password = ({
           return (
             <FormItem>
               <FieldLabel inForm labelName={labelName} required={required} disableLabelFormatting={disableLabelFormatting} />
-              {renderInput({ ...field, value: passwordValue || field.value || '' })}
-              {renderStrengthRules()}
+              {/* The form owns the value, so form.reset() clears this input. */}
+              {renderInput({ ...field, value: field.value ?? '' })}
+              {renderStrengthRules(field.value ?? '')}
               <FormMessage>{error ? String(error?.message || '') : customMessage || ''}</FormMessage>
             </FormItem>
           );
@@ -119,6 +121,7 @@ export const Password = ({
     <>
       <FieldLabel labelName={labelName} required={required} htmlFor={inputId} disableLabelFormatting={disableLabelFormatting} />
       {renderInput()}
+      {renderStrengthRules(passwordValue)}
     </>
   );
 };
