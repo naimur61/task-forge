@@ -23,12 +23,12 @@ Workflow per stage: `git checkout -b <branch>` → build → `npm run typecheck 
 - [x] 0. `main`: git init + foundation commit (everything above), push
 - [x] 1. `feat/dashboard`: stat cards, status/priority/trend charts, my tasks, recent activity, new-user empty state
 - [x] 2. `feat/projects`: projects list (search, status, grid/list, pagination), create project dialog
-- [ ] 3. `feat/project-workspace`: project layout (header, tabs, 404 for non-members), shared `[projectId]/service.ts`
+- [x] 3. `feat/project-workspace`: project layout (header, tabs, 404 for non-members), shared `[projectId]/service.ts`, Activity tab
 - [ ] 4. `feat/task-list`: List tab with URL-synced search/filter/sort/pagination, filter chips, table (desktop) / cards (mobile), quick status change
 - [ ] 5. `feat/task-drawer`: New task dialog, task drawer (edit, delete, permission gating, unsaved-changes guard), comments
 - [ ] 6. `feat/kanban-board`: Board tab, dnd-kit drag & drop (mouse/touch/keyboard), optimistic move + rollback, quick add per column
 - [ ] 7. `feat/members`: members table, add member with user search, change role, remove, leave, transfer ownership
-- [ ] 8. `feat/project-settings-activity`: activity timeline; settings (edit, archive/restore, delete with typed confirm)
+- [ ] 8. `feat/project-settings`: settings (edit, archive/restore, delete with typed confirm)
 - [ ] 9. `feat/notifications-account`: notifications page (mark read / all), account (profile, password, theme)
 - [ ] 10. `feat/auth-pages`: split-layout login/register with demo hint, global not-found / error pages
 - [ ] 11. `feat/skeletons`: boneyard-js bones build for every loading surface, registry import

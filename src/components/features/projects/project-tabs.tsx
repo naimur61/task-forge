@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Activity, KanbanSquare, List, Settings, Users } from 'lucide-react';
@@ -14,6 +15,7 @@ interface ProjectTabsProps {
 /** Tab links under the project header: Board, List, Members, Activity, Settings. */
 export function ProjectTabs({ projectId, showSettings }: ProjectTabsProps) {
   const pathname = usePathname();
+  const navRef = useRef<HTMLElement>(null);
   const base = `/projects/${projectId}`;
   const tabs = [
     { label: 'Board', href: `${base}/board`, icon: KanbanSquare },
@@ -23,8 +25,13 @@ export function ProjectTabs({ projectId, showSettings }: ProjectTabsProps) {
     ...(showSettings ? [{ label: 'Settings', href: `${base}/settings`, icon: Settings }] : []),
   ];
 
+  // On narrow screens, keep the active tab visible in the scrolling strip.
+  useEffect(() => {
+    navRef.current?.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }, [pathname]);
+
   return (
-    <nav aria-label="Project sections" className="-mb-px flex gap-1 overflow-x-auto border-b border-border">
+    <nav ref={navRef} aria-label="Project sections" className="-mb-px flex gap-1 overflow-x-auto border-b border-border [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {tabs.map((tab) => {
         const active = pathname.startsWith(tab.href);
         const Icon = tab.icon;
