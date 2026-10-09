@@ -24,7 +24,7 @@ function DueDate({ task }: { task: Task }) {
   return (
     <span className={cn('inline-flex items-center gap-1', isTaskOverdue(task) ? 'font-medium text-destructive' : 'text-muted-foreground')}>
       <CalendarClock className="h-3.5 w-3.5" aria-hidden />
-      {formatDue(task.dueDate)}
+      {formatDue(task.dueDate, task.status === 'DONE')}
     </span>
   );
 }
