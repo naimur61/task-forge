@@ -9,27 +9,34 @@ import { cn } from '@/lib/utils';
 import { siteConfig } from '@/config/site';
 import { BrandMark } from '../brand-mark';
 
-/** Desktop sidebar (md and up). On small screens the same links live in MobileNav. */
+/**
+ * Sidebar for md and up. Tablets (md) always get the slim icon bar;
+ * desktops (lg) show the full bar unless the user collapses it.
+ * On phones the same links live in MobileNav.
+ */
 export function LeftSidebar() {
   const pathname = usePathname();
   const { state, toggleLeftSidebar } = useLayout();
   const collapsed = !state.isLeftSidebarOpen;
 
+  // Label text: always hidden when collapsed, otherwise visible from lg only.
+  const labelClass = collapsed ? 'sr-only' : 'sr-only lg:not-sr-only';
+
   return (
     <aside
       className={cn(
-        'fixed left-0 top-0 z-40 hidden h-screen flex-col border-r border-border bg-background transition-[width] duration-300 md:flex',
-        collapsed ? 'w-16' : 'w-64',
+        'fixed left-0 top-0 z-40 hidden h-screen w-16 flex-col border-r border-border bg-background transition-[width] duration-200 md:flex',
+        !collapsed && 'lg:w-64',
       )}
     >
-      <div className={cn('flex h-14 items-center border-b border-border px-4', collapsed && 'justify-center px-2')}>
+      <div className={cn('flex h-14 items-center justify-center border-b border-border px-2', !collapsed && 'lg:justify-start lg:px-4')}>
         <Link href="/dashboard" className="flex items-center gap-2.5 text-base font-bold tracking-tight text-foreground" title={siteConfig.name}>
           <BrandMark />
-          <span className={cn(collapsed && 'sr-only')}>{siteConfig.name}</span>
+          <span className={labelClass}>{siteConfig.name}</span>
         </Link>
       </div>
 
-      <nav aria-label="Primary" className="flex-1 overflow-y-auto px-3 py-4">
+      <nav aria-label="Primary" className="flex-1 overflow-y-auto px-2 py-4 lg:px-3">
         <ul className="space-y-1">
           {NAV_ITEMS.map((item) => {
             const active = isActivePath(pathname, item.href);
@@ -39,15 +46,15 @@ export function LeftSidebar() {
                 <Link
                   href={item.href}
                   aria-current={active ? 'page' : undefined}
-                  title={collapsed ? item.label : undefined}
+                  title={item.label}
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-                    collapsed && 'justify-center px-2',
+                    'flex items-center justify-center gap-3 rounded-lg px-2 py-2.5 text-sm font-medium transition-colors',
+                    !collapsed && 'lg:justify-start lg:px-3',
                     active ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-accent hover:text-foreground',
                   )}
                 >
                   <Icon className="h-5 w-5 shrink-0" aria-hidden />
-                  <span className={cn(collapsed && 'sr-only')}>{item.label}</span>
+                  <span className={labelClass}>{item.label}</span>
                 </Link>
               </li>
             );
@@ -55,7 +62,8 @@ export function LeftSidebar() {
         </ul>
       </nav>
 
-      <div className="border-t border-border p-2">
+      {/* Collapse toggle only matters on desktop; tablets are always slim. */}
+      <div className="hidden border-t border-border p-2 lg:block">
         <button
           type="button"
           onClick={toggleLeftSidebar}
