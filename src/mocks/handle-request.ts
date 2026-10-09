@@ -9,7 +9,7 @@ import { dashboardRoutes } from './routes/dashboard';
 const ROUTES: MockRoute[] = [...authRoutes, ...projectRoutes, ...memberRoutes, ...taskRoutes, ...dashboardRoutes];
 
 /** Fake network delay so loading states are visible. */
-const DELAY_MS = 300;
+const DELAY_MS = process.env.NODE_ENV === 'test' ? 0 : 300;
 
 /** Match `/projects/prj_1/tasks` against `/projects/:projectId/tasks`. Returns the params or null. */
 function matchPath(pattern: string, path: string): Record<string, string> | null {
