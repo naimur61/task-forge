@@ -8,7 +8,7 @@ export function StatusBadge({ status, className }: { status: TaskStatus; classNa
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full border border-border px-2 py-0.5 text-xs font-medium text-foreground',
+        'inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-border px-2 py-0.5 text-xs font-medium text-foreground',
         className,
       )}
     >
@@ -22,7 +22,7 @@ export function StatusBadge({ status, className }: { status: TaskStatus; classNa
 export function PriorityBadge({ priority, className }: { priority: TaskPriority; className?: string }) {
   const info = priorityInfo(priority);
   return (
-    <span className={cn('inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium', info.badge, className)}>
+    <span className={cn('inline-flex items-center whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium', info.badge, className)}>
       {info.label}
     </span>
   );

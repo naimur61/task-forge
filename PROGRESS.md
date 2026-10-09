@@ -24,7 +24,7 @@ Workflow per stage: `git checkout -b <branch>` → build → `npm run typecheck 
 - [x] 1. `feat/dashboard`: stat cards, status/priority/trend charts, my tasks, recent activity, new-user empty state
 - [x] 2. `feat/projects`: projects list (search, status, grid/list, pagination), create project dialog
 - [x] 3. `feat/project-workspace`: project layout (header, tabs, 404 for non-members), shared `[projectId]/service.ts`, Activity tab
-- [ ] 4. `feat/task-list`: List tab with URL-synced search/filter/sort/pagination, filter chips, table (desktop) / cards (mobile), quick status change
+- [x] 4. `feat/task-list`: List tab with URL-synced search/filter/sort/pagination, filter chips, table (desktop) / cards (mobile), quick status change
 - [ ] 5. `feat/task-drawer`: New task dialog, task drawer (edit, delete, permission gating, unsaved-changes guard), comments
 - [ ] 6. `feat/kanban-board`: Board tab, dnd-kit drag & drop (mouse/touch/keyboard), optimistic move + rollback, quick add per column
 - [ ] 7. `feat/members`: members table, add member with user search, change role, remove, leave, transfer ownership
