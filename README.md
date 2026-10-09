@@ -1,236 +1,114 @@
-# taskforge
+# TaskForge
 
-Next.js app generated with [Nexstruct](https://www.npmjs.com/package/nexstruct).
+Project and task management for small teams: projects, a kanban board, a filterable task list, members with roles, comments, notifications and a dashboard. Built with Next.js 15, React 19, TypeScript, TanStack Query and Tailwind.
 
-## Getting started
+![Dashboard](docs/screenshots/dashboard.jpg)
+![Board](docs/screenshots/board.jpg)
+
+## Features
+
+- **Auth**: sign up, sign in, silent session refresh (access token in memory, refresh token in an httpOnly cookie), protected pages, demo accounts.
+- **Dashboard**: headline stats, tasks by status (color-blind safe) and priority, 14-day completion trend, my tasks, recent activity.
+- **Projects**: search, status filter, grid/list views, pagination, create, edit, archive/restore, delete with typed confirmation.
+- **Board**: drag and drop between columns with mouse, touch or keyboard; optimistic updates with rollback; quick add per column.
+- **List**: debounced search, multi-select filters (status, priority, assignee, overdue), sort, pagination. All state lives in the URL, so views are shareable.
+- **Task drawer**: edit every field, delete, comments (add, edit own, delete), unsaved-changes guard, read-only view for people without rights.
+- **Members**: add people by search, owner/admin/member roles, change role, remove, leave, transfer ownership.
+- **Notifications**: bell with unread badge, full page, mark read / mark all read.
+- **Account**: profile name, change password, light/dark/system theme.
+- **Productivity**: Ctrl/Cmd+K command palette and shortcuts (`c`, `/`, `g d`, `g p`, `g n`, `?`).
+- **Polish**: responsive from 360 px up, dark mode, loading skeletons generated from the real UI (boneyard-js), friendly empty, error and 404 states.
+
+## Quick start
 
 ```bash
 npm install
-npm run dev
+cp .env.example .env.local     # NEXT_PUBLIC_API_URL=/api/mock (demo mode)
+npm run dev                    # http://localhost:3000
 ```
 
-Copy the environment template and fill it in:
+No backend is needed: the app ships with a **demo API** inside Next.js (`/api/mock`) with seeded data.
+
+### Demo accounts
+
+All demo users have the password `Demo1234!`. The login page has one-click buttons for them.
+
+| Email | Role in "Website Redesign" |
+|---|---|
+| owner@demo.dev | Owner |
+| admin@demo.dev | Admin |
+| member@demo.dev | Member |
+
+Demo data lives in memory, so restarting the dev server resets it.
+
+## Switching to the real backend
+
+Set one variable in `.env.local`:
 
 ```bash
-cp .env.example .env.local
+NEXT_PUBLIC_API_URL=http://localhost:4000/api/v1
 ```
 
-Open http://localhost:3000.
+Nothing else changes. The demo API (`src/mocks/`) is the contract the backend should follow:
 
-## Stack
-
-| | |
-|---|---|
-| Framework | Next.js 15 (App Router) · React 19 · TypeScript |
-| Styling | Tailwind CSS |
-| UI | shadcn/ui (Radix + Tailwind CSS) |
-| Forms | react-hook-form + zod |
-| State | Zustand |
-| API client | Fetch client |
-| Data fetching | TanStack Query hooks · server-side fetch helpers |
-| Auth | JWT (your backend) — in-memory access token + HttpOnly refresh cookie |
-| Realtime | Socket.io client |
+- **Resources** return `{ data, meta? }`. Lists include `meta: { page, limit, total, totalPages, hasNext, hasPrev }`.
+- **Errors** return `{ statusCode, error, message, code, details: [{ field, message }] }`. Field details show up next to the matching form inputs.
+- **Auth endpoints** follow `src/auth/jwt/config.ts`. `login` and `register` return `{ user, accessToken }` and set the refresh cookie. `refresh` returns `{ accessToken }`. `me` returns the user. These are not wrapped in `data`.
+- **Permissions**: 404 for projects you are not a member of, and 403 for actions your role can't do. The full rule set is in `src/lib/permissions.ts`, and the UI and the demo API share it.
+- Every endpoint is listed in `src/mocks/routes/*.ts`.
 
 ## Project structure
 
 ```
 src/
-├── api/         # API clients
-├── app/         # Routes (App Router): page.tsx → *-container.tsx
-├── auth/        # Auth configuration and clients
-├── components/  # ui/ primitives · common/ shared components · layouts/ app shell · features/ by domain
-├── config/      # Site metadata and navigation
-├── fonts/       # Self-hosted fonts
-├── hooks/       # React hooks (data fetching, theme, …)
-├── lib/         # Utilities, HTTP core, theme palette
-├── providers/   # Context providers, composed in providers/index.tsx
-├── store/       # State stores
-├── styles/      # Extra global styles
-├── types/       # Shared TypeScript types
+├─ app/                     routes: page.tsx → *-container.tsx (+ service.ts for API calls)
+│  ├─ (auth)/               login, register, forgot/reset password
+│  ├─ (app)/                signed-in shell (sidebar, top bar, palette)
+│  │  ├─ dashboard/  projects/[projectId]/{board,list,members,activity,settings}/
+│  │  └─ notifications/  account/
+│  └─ api/mock/[...path]/   demo API entry (forwards to src/mocks)
+├─ components/
+│  ├─ ui/                   raw shadcn primitives (never edited)
+│  ├─ ui/custom/            customized copies of primitives
+│  ├─ common/               shared, domain-free (EmptyState, ConfirmDialog, fields, schemas)
+│  ├─ layouts/              sidebar, top bar, mobile nav
+│  └─ features/             UI per domain (tasks, projects, members, dashboard, ...)
+├─ hooks/api-hooks/         useFetchData / useApiMutation (the only way to call the API)
+├─ mocks/                   demo API: seed JSON, in-memory db, routes, fixtures
+├─ bones/                   generated skeletons (npm run bones)
+├─ lib/                     permissions, http client helpers, date utils
+├─ types/                   one file per domain (task.ts, project.ts, ...)
+└─ store/zustand/           tiny UI state (command palette)
 ```
 
-Conventions (page → container → components, where files go, the `ActionButton` rule) are in [guide.md](./guide.md).
+Conventions (full version in `guide.md`):
+
+- `page.tsx` only renders a container. Containers hold state. Components get props and callbacks.
+- API calls live only in a route's `service.ts`, built on `@/hooks/api-hooks`. Calls used by several pages go in the nearest shared parent's `service.ts`.
+- The folder names the role and the file names the thing (`types/task.ts`, not `task.type.ts`). Everything is kebab-case.
+- Server state lives in TanStack Query, list filters in the URL, and small UI state in Zustand.
 
 ## Scripts
 
-| Command | |
+| Script | What it does |
 |---|---|
+| `npm run dev` | Dev server on :3000 |
+| `npm run build` / `start` | Production build / serve |
+| `npm run lint` / `typecheck` | ESLint / TypeScript |
+| `npm test` | Unit tests (Vitest, `tests/unit/`) |
+| `npm run bones` | Re-capture loading skeletons (dev server must be running) |
+| `npm run theme:preset -- <name>` | Switch the color preset |
 
+## Decisions and trade-offs
 
-## Calling your API
+- **Demo API as Next.js route handlers** instead of MSW: it's plain HTTP, so httpOnly cookies, refresh and middleware-free auth all behave like the real thing, and switching backends is one env var.
+- **Client-side route guard** (`RequireAuth`) instead of `middleware.ts`: the refresh cookie belongs to the API's domain, so Next.js middleware can't see it once the backend runs elsewhere.
+- **Server-side sorting and pagination** with the plain `ui/table` instead of TanStack Table, because the API already sorts and pages.
+- **Optimistic board moves** with fractional positions (`afterId`), rolled back if the server refuses.
+- **Charts are lazy-loaded**, which keeps Recharts (~100 kB) out of the dashboard's first load.
 
-### Client components — `src/hooks/client-api`
+## Not included yet
 
-TanStack Query hooks on top of one request function (`useApiRequest`), which resolves paths against `NEXT_PUBLIC_API_URL`, attaches the signed-in user's credentials and throws a typed `ApiError`.
-
-```tsx
-'use client';
-import { useApiMutation, useFetchData } from '@/hooks/client-api';
-
-type User = { id: string; name: string };
-
-export function Users() {
-  const { data, isPending, error } = useFetchData<User[]>({ path: 'users', params: { page: 1 } });
-  const createUser = useApiMutation<User, { name: string }>({
-    method: 'POST',
-    path: 'users',
-    invalidate: [['users']],
-    successMessage: 'User created',
-  });
-  // …
-}
-```
-
-Failed requests are retried only for network errors and 5xx responses. Mutation errors show a toast with the server's message (`errorToast: false` to opt out).
-
-### Server Components & Server Actions — `src/hooks/server-api`
-
-`server-only` helpers using `API_URL` (falls back to `NEXT_PUBLIC_API_URL`).
-
-```tsx
-import { fetchData } from '@/hooks/server-api';
-
-export default async function Page() {
-  const users = await fetchData<{ id: string; name: string }[]>('users', { revalidate: 60, tags: ['users'] });
-  // …
-}
-```
-
-> With the **memory-cookie** strategy the token only exists in the browser, so server-side requests are anonymous. Load user-specific data from client components.
-
-### Fetch client — `src/api/fetch`
-
-```ts
-import { api } from '@/api/fetch/client';
-
-const users = await api.get<{ id: string }[]>('users', { params: { page: 1 } });
-```
-
-## Authentication — JWT against your backend
-
-Token strategy: **in-memory access token + HttpOnly refresh cookie** (`src/auth/jwt/token-storage.ts`).
-
-| Page | Route |
-|------|-------|
-| Sign in | `/login` |
-| Create account | `/register` |
-| Forgot / reset password | `/forgot-password` · `/reset-password?token=…` |
-| Protected example | `/account` |
-
-```tsx
-'use client';
-import { useAuth } from '@/hooks/use-auth';
-import { RequireAuth } from '@/components/common/auth/require-auth';
-
-function Profile() {
-  const { user, logout } = useAuth();
-  // …
-}
-
-export default function ProfileContainer() {
-  return (
-    <RequireAuth>
-      <Profile />
-    </RequireAuth>
-  );
-}
-```
-
-Expired sessions are refreshed transparently (once, even when many requests fail at the same time). Your backend needs these endpoints — paths are configurable in `src/auth/jwt/config.ts`:
-
-| Endpoint | Body | Returns |
-|----------|------|---------|
-| `POST /auth/login` | `{ email, password }` | `{ user, accessToken?, refreshToken? }` |
-| `POST /auth/register` | `{ name, email, password }` | same as login |
-| `POST /auth/refresh` | `{ refreshToken? }` | `{ accessToken?, refreshToken? }` |
-| `POST /auth/logout` | — | — |
-| `GET /auth/me` | — | `User` |
-| `POST /auth/forgot-password` | `{ email }` | — |
-| `POST /auth/reset-password` | `{ token, password }` | — |
-
-Cookies must be `HttpOnly; Secure; SameSite`, and CORS must allow credentials for this origin.
-
-## State
-
-### Zustand — `src/store/zustand`
-
-```tsx
-import { useCounterStore } from '@/store/zustand';
-
-const count = useCounterStore((s) => s.count);
-const increment = useCounterStore((s) => s.increment);
-```
-
-## Forms
-
-react-hook-form + zod, with `CustomField.*` components in `src/components/common/fields`.
-
-```tsx
-'use client';
-import { useZodForm } from '@/components/common/forms/hooks/use-form';
-import { loginSchema } from '@/components/common/forms/schemas/example.schema';
-import { CustomField } from '@/components/common/fields/cus-input-field';
-
-export function SignInForm() {
-  const form = useZodForm(loginSchema, { defaultValues: { email: '', password: '' } });
-  return (
-    <form onSubmit={form.handleSubmit((values) => console.log(values))}>
-      <CustomField.Text form={form} name="email" type="email" labelName="Email" />
-      <CustomField.Password form={form} name="password" labelName="Password" />
-    </form>
-  );
-}
-```
-
-## Theme
-
-Every color comes from `src/lib/theme/palette.json`.
-
-```bash
-npm run theme                    # regenerate src/app/globals.css after editing palette.json
-npm run theme:preset -- emerald  # switch preset: blue emerald violet rose amber cyan slate mono
-```
-
-Light/dark mode follows the OS until the user picks one with the toggle in the top bar.
-
-## Realtime
-
-```tsx
-'use client';
-import { useEffect } from 'react';
-import { ActionButton } from '@/components/common/button';
-import { useSocket } from '@/hooks/socket';
-
-export function Chat() {
-  const { isConnected, emit, on } = useSocket();
-  useEffect(() => on<{ text: string }>('message:new', (m) => console.log(m.text)), [on]);
-  return (
-    <ActionButton disabled={!isConnected} handleOpen={() => emit('message:send', { text: 'hi' })}>
-      Send
-    </ActionButton>
-  );
-}
-```
-
-Set `NEXT_PUBLIC_SOCKET_URL` in `.env.local`.
-
-## Git hooks
-
-Installed by `npm install` (Husky):
-
-| Hook | Runs |
-|------|------|
-| pre-commit | Prettier on staged files (lint-staged) |
-| pre-push | `tsc`, ESLint, `next build` |
-| commit-msg | Conventional Commits (commitlint) |
-
-Bypass once with `--no-verify`.
-
-## Updating
-
-```bash
-npx nexstruct update          # preview and apply template improvements
-npx nexstruct update --dry-run
-```
-
-Files you changed are never overwritten without `--force` (and then a backup is kept).
+- Real-time updates (socket.io client is installed; events can patch the same query caches)
+- File attachments, bulk task actions, i18n, offline mode
+- Playwright end-to-end tests
