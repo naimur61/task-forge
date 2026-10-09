@@ -1,6 +1,7 @@
 import { useApiMutation, useFetchData } from '@/hooks/api-hooks';
 import type { Notification } from '@/types/notification';
-import type { PageMeta } from '@/types/common';
+import type { PageMeta, Paginated } from '@/types/common';
+import type { Project } from '@/types/project';
 
 /** Notification list response. `meta.unread` is the unread count for the bell badge. */
 export interface NotificationPage {
@@ -40,4 +41,13 @@ export const useMarkAllNotificationsRead = () =>
     toBody: () => undefined,
     invalidate: [notificationKeys.all],
     successMessage: 'All caught up',
+  });
+
+/** Active projects for the command palette. Loads only while the palette is open. */
+export const usePaletteProjects = (enabled: boolean) =>
+  useFetchData<Paginated<Project>>({
+    path: 'projects',
+    queryKey: ['projects', 'palette'],
+    filterData: { status: 'ACTIVE', limit: 50 },
+    enabled,
   });
