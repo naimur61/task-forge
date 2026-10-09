@@ -1,0 +1,530 @@
+[
+  {
+    "id": "act_0113",
+    "projectId": "prj_web",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Design new homepage hero\"",
+    "createdAt": "2026-09-24T09:00:00.000Z"
+  },
+  {
+    "id": "act_0114",
+    "projectId": "prj_web",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Fix navbar overlap on Safari\"",
+    "createdAt": "2026-10-03T09:00:00.000Z"
+  },
+  {
+    "id": "act_0115",
+    "projectId": "prj_web",
+    "actorId": "usr_member",
+    "action": "task.created",
+    "message": "created \"Write accessibility audit\"",
+    "createdAt": "2026-09-18T09:00:00.000Z"
+  },
+  {
+    "id": "act_0116",
+    "projectId": "prj_web",
+    "actorId": "usr_member",
+    "action": "task.created",
+    "message": "created \"Set up image CDN\"",
+    "createdAt": "2026-09-22T09:00:00.000Z"
+  },
+  {
+    "id": "act_0117",
+    "projectId": "prj_web",
+    "actorId": "usr_dev2",
+    "action": "task.created",
+    "message": "created \"Pricing page copy review\"",
+    "createdAt": "2026-09-24T09:00:00.000Z"
+  },
+  {
+    "id": "act_0118",
+    "projectId": "prj_web",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Add dark mode toggle\"",
+    "createdAt": "2026-10-05T09:00:00.000Z"
+  },
+  {
+    "id": "act_0119",
+    "projectId": "prj_web",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Migrate blog to MDX\"",
+    "createdAt": "2026-09-30T09:00:00.000Z"
+  },
+  {
+    "id": "act_0120",
+    "projectId": "prj_web",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Cookie consent banner\"",
+    "createdAt": "2026-09-16T09:00:00.000Z"
+  },
+  {
+    "id": "act_0121",
+    "projectId": "prj_web",
+    "actorId": "usr_member",
+    "action": "task.created",
+    "message": "created \"Improve Lighthouse score\"",
+    "createdAt": "2026-09-30T09:00:00.000Z"
+  },
+  {
+    "id": "act_0122",
+    "projectId": "prj_web",
+    "actorId": "usr_dev1",
+    "action": "task.created",
+    "message": "created \"Footer links cleanup\"",
+    "createdAt": "2026-09-20T09:00:00.000Z"
+  },
+  {
+    "id": "act_0123",
+    "projectId": "prj_web",
+    "actorId": "usr_dev2",
+    "action": "task.created",
+    "message": "created \"Contact form spam protection\"",
+    "createdAt": "2026-10-03T09:00:00.000Z"
+  },
+  {
+    "id": "act_0124",
+    "projectId": "prj_web",
+    "actorId": "usr_dev1",
+    "action": "task.created",
+    "message": "created \"Create 404 illustration\"",
+    "createdAt": "2026-09-24T09:00:00.000Z"
+  },
+  {
+    "id": "act_0125",
+    "projectId": "prj_web",
+    "actorId": "usr_dev1",
+    "action": "task.completed",
+    "message": "moved \"Create 404 illustration\" to Done",
+    "createdAt": "2026-10-09T14:00:00.000Z"
+  },
+  {
+    "id": "act_0126",
+    "projectId": "prj_web",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Customer logos carousel\"",
+    "createdAt": "2026-10-05T09:00:00.000Z"
+  },
+  {
+    "id": "act_0127",
+    "projectId": "prj_web",
+    "actorId": "usr_dev1",
+    "action": "task.created",
+    "message": "created \"Analytics events plan\"",
+    "createdAt": "2026-09-25T09:00:00.000Z"
+  },
+  {
+    "id": "act_0128",
+    "projectId": "prj_web",
+    "actorId": "usr_admin",
+    "action": "task.created",
+    "message": "created \"SEO meta tags for all pages\"",
+    "createdAt": "2026-09-26T09:00:00.000Z"
+  },
+  {
+    "id": "act_0129",
+    "projectId": "prj_web",
+    "actorId": "usr_dev2",
+    "action": "task.created",
+    "message": "created \"Responsive pricing table\"",
+    "createdAt": "2026-09-16T09:00:00.000Z"
+  },
+  {
+    "id": "act_0130",
+    "projectId": "prj_web",
+    "actorId": "usr_dev1",
+    "action": "task.completed",
+    "message": "moved \"Responsive pricing table\" to Done",
+    "createdAt": "2026-10-03T14:00:00.000Z"
+  },
+  {
+    "id": "act_0131",
+    "projectId": "prj_mobile",
+    "actorId": "usr_admin",
+    "action": "task.created",
+    "message": "created \"Offline sync for tasks\"",
+    "createdAt": "2026-10-08T09:00:00.000Z"
+  },
+  {
+    "id": "act_0132",
+    "projectId": "prj_mobile",
+    "actorId": "usr_member",
+    "action": "task.created",
+    "message": "created \"Push notification permissions\"",
+    "createdAt": "2026-09-30T09:00:00.000Z"
+  },
+  {
+    "id": "act_0133",
+    "projectId": "prj_mobile",
+    "actorId": "usr_member",
+    "action": "task.created",
+    "message": "created \"Onboarding screens\"",
+    "createdAt": "2026-09-19T09:00:00.000Z"
+  },
+  {
+    "id": "act_0134",
+    "projectId": "prj_mobile",
+    "actorId": "usr_dev3",
+    "action": "task.created",
+    "message": "created \"Crash on Android 12 login\"",
+    "createdAt": "2026-09-19T09:00:00.000Z"
+  },
+  {
+    "id": "act_0135",
+    "projectId": "prj_mobile",
+    "actorId": "usr_member",
+    "action": "task.completed",
+    "message": "moved \"Crash on Android 12 login\" to Done",
+    "createdAt": "2026-10-10T14:00:00.000Z"
+  },
+  {
+    "id": "act_0136",
+    "projectId": "prj_mobile",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Biometric login\"",
+    "createdAt": "2026-09-17T09:00:00.000Z"
+  },
+  {
+    "id": "act_0137",
+    "projectId": "prj_mobile",
+    "actorId": "usr_admin",
+    "action": "task.created",
+    "message": "created \"App icon refresh\"",
+    "createdAt": "2026-09-17T09:00:00.000Z"
+  },
+  {
+    "id": "act_0138",
+    "projectId": "prj_mobile",
+    "actorId": "usr_admin",
+    "action": "task.created",
+    "message": "created \"Deep links for invites\"",
+    "createdAt": "2026-10-08T09:00:00.000Z"
+  },
+  {
+    "id": "act_0139",
+    "projectId": "prj_mobile",
+    "actorId": "usr_member",
+    "action": "task.created",
+    "message": "created \"Reduce app start time\"",
+    "createdAt": "2026-10-05T09:00:00.000Z"
+  },
+  {
+    "id": "act_0140",
+    "projectId": "prj_mobile",
+    "actorId": "usr_admin",
+    "action": "task.created",
+    "message": "created \"Settings screen redesign\"",
+    "createdAt": "2026-09-28T09:00:00.000Z"
+  },
+  {
+    "id": "act_0141",
+    "projectId": "prj_mobile",
+    "actorId": "usr_member",
+    "action": "task.created",
+    "message": "created \"In-app feedback form\"",
+    "createdAt": "2026-09-29T09:00:00.000Z"
+  },
+  {
+    "id": "act_0142",
+    "projectId": "prj_mobile",
+    "actorId": "usr_member",
+    "action": "task.created",
+    "message": "created \"Release notes for v2.0\"",
+    "createdAt": "2026-09-17T09:00:00.000Z"
+  },
+  {
+    "id": "act_0143",
+    "projectId": "prj_mobile",
+    "actorId": "usr_member",
+    "action": "task.created",
+    "message": "created \"Beta testers rollout\"",
+    "createdAt": "2026-09-15T09:00:00.000Z"
+  },
+  {
+    "id": "act_0144",
+    "projectId": "prj_mobile",
+    "actorId": "usr_admin",
+    "action": "task.completed",
+    "message": "moved \"Beta testers rollout\" to Done",
+    "createdAt": "2026-10-10T14:00:00.000Z"
+  },
+  {
+    "id": "act_0145",
+    "projectId": "prj_api",
+    "actorId": "usr_dev1",
+    "action": "task.created",
+    "message": "created \"Rate limiting middleware\"",
+    "createdAt": "2026-10-02T09:00:00.000Z"
+  },
+  {
+    "id": "act_0146",
+    "projectId": "prj_api",
+    "actorId": "usr_dev3",
+    "action": "task.created",
+    "message": "created \"OpenAPI docs generation\"",
+    "createdAt": "2026-10-07T09:00:00.000Z"
+  },
+  {
+    "id": "act_0147",
+    "projectId": "prj_api",
+    "actorId": "usr_dev1",
+    "action": "task.created",
+    "message": "created \"API keys management\"",
+    "createdAt": "2026-10-02T09:00:00.000Z"
+  },
+  {
+    "id": "act_0148",
+    "projectId": "prj_api",
+    "actorId": "usr_dev3",
+    "action": "task.created",
+    "message": "created \"Pagination for /orders\"",
+    "createdAt": "2026-09-23T09:00:00.000Z"
+  },
+  {
+    "id": "act_0149",
+    "projectId": "prj_api",
+    "actorId": "usr_dev3",
+    "action": "task.created",
+    "message": "created \"Webhook retries\"",
+    "createdAt": "2026-10-04T09:00:00.000Z"
+  },
+  {
+    "id": "act_0150",
+    "projectId": "prj_api",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Versioning strategy doc\"",
+    "createdAt": "2026-09-15T09:00:00.000Z"
+  },
+  {
+    "id": "act_0151",
+    "projectId": "prj_api",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Sandbox environment\"",
+    "createdAt": "2026-10-01T09:00:00.000Z"
+  },
+  {
+    "id": "act_0152",
+    "projectId": "prj_api",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Error format RFC 7807\"",
+    "createdAt": "2026-10-02T09:00:00.000Z"
+  },
+  {
+    "id": "act_0153",
+    "projectId": "prj_api",
+    "actorId": "usr_dev1",
+    "action": "task.created",
+    "message": "created \"Usage metrics dashboard\"",
+    "createdAt": "2026-10-02T09:00:00.000Z"
+  },
+  {
+    "id": "act_0154",
+    "projectId": "prj_api",
+    "actorId": "usr_dev3",
+    "action": "task.created",
+    "message": "created \"SDK for JavaScript\"",
+    "createdAt": "2026-09-22T09:00:00.000Z"
+  },
+  {
+    "id": "act_0155",
+    "projectId": "prj_q3",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Launch blog post\"",
+    "createdAt": "2026-10-04T09:00:00.000Z"
+  },
+  {
+    "id": "act_0156",
+    "projectId": "prj_q3",
+    "actorId": "usr_member",
+    "action": "task.completed",
+    "message": "moved \"Launch blog post\" to Done",
+    "createdAt": "2026-10-09T14:00:00.000Z"
+  },
+  {
+    "id": "act_0157",
+    "projectId": "prj_q3",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Social media assets\"",
+    "createdAt": "2026-10-05T09:00:00.000Z"
+  },
+  {
+    "id": "act_0158",
+    "projectId": "prj_q3",
+    "actorId": "usr_member",
+    "action": "task.completed",
+    "message": "moved \"Social media assets\" to Done",
+    "createdAt": "2026-10-10T14:00:00.000Z"
+  },
+  {
+    "id": "act_0159",
+    "projectId": "prj_q3",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Press kit\"",
+    "createdAt": "2026-09-17T09:00:00.000Z"
+  },
+  {
+    "id": "act_0160",
+    "projectId": "prj_q3",
+    "actorId": "usr_owner",
+    "action": "task.completed",
+    "message": "moved \"Press kit\" to Done",
+    "createdAt": "2026-09-28T14:00:00.000Z"
+  },
+  {
+    "id": "act_0161",
+    "projectId": "prj_q3",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Email campaign\"",
+    "createdAt": "2026-10-07T09:00:00.000Z"
+  },
+  {
+    "id": "act_0162",
+    "projectId": "prj_q3",
+    "actorId": "usr_owner",
+    "action": "task.completed",
+    "message": "moved \"Email campaign\" to Done",
+    "createdAt": "2026-09-29T14:00:00.000Z"
+  },
+  {
+    "id": "act_0163",
+    "projectId": "prj_q3",
+    "actorId": "usr_owner",
+    "action": "task.created",
+    "message": "created \"Partner webinar\"",
+    "createdAt": "2026-10-01T09:00:00.000Z"
+  },
+  {
+    "id": "act_0164",
+    "projectId": "prj_q3",
+    "actorId": "usr_member",
+    "action": "task.completed",
+    "message": "moved \"Partner webinar\" to Done",
+    "createdAt": "2026-10-05T14:00:00.000Z"
+  },
+  {
+    "id": "act_0165",
+    "projectId": "prj_web",
+    "actorId": "usr_owner",
+    "action": "member.added",
+    "message": "joined the project",
+    "createdAt": "2026-08-11T09:00:00.000Z"
+  },
+  {
+    "id": "act_0166",
+    "projectId": "prj_web",
+    "actorId": "usr_admin",
+    "action": "member.added",
+    "message": "joined the project",
+    "createdAt": "2026-08-12T09:00:00.000Z"
+  },
+  {
+    "id": "act_0167",
+    "projectId": "prj_web",
+    "actorId": "usr_member",
+    "action": "member.added",
+    "message": "joined the project",
+    "createdAt": "2026-08-13T09:00:00.000Z"
+  },
+  {
+    "id": "act_0168",
+    "projectId": "prj_web",
+    "actorId": "usr_dev1",
+    "action": "member.added",
+    "message": "joined the project",
+    "createdAt": "2026-08-21T09:00:00.000Z"
+  },
+  {
+    "id": "act_0169",
+    "projectId": "prj_web",
+    "actorId": "usr_dev2",
+    "action": "member.added",
+    "message": "joined the project",
+    "createdAt": "2026-08-31T09:00:00.000Z"
+  },
+  {
+    "id": "act_0170",
+    "projectId": "prj_mobile",
+    "actorId": "usr_admin",
+    "action": "member.added",
+    "message": "joined the project",
+    "createdAt": "2026-08-26T09:00:00.000Z"
+  },
+  {
+    "id": "act_0171",
+    "projectId": "prj_mobile",
+    "actorId": "usr_owner",
+    "action": "member.added",
+    "message": "joined the project",
+    "createdAt": "2026-08-27T09:00:00.000Z"
+  },
+  {
+    "id": "act_0172",
+    "projectId": "prj_mobile",
+    "actorId": "usr_member",
+    "action": "member.added",
+    "message": "joined the project",
+    "createdAt": "2026-08-28T09:00:00.000Z"
+  },
+  {
+    "id": "act_0173",
+    "projectId": "prj_mobile",
+    "actorId": "usr_dev3",
+    "action": "member.added",
+    "message": "joined the project",
+    "createdAt": "2026-09-10T09:00:00.000Z"
+  },
+  {
+    "id": "act_0174",
+    "projectId": "prj_api",
+    "actorId": "usr_owner",
+    "action": "member.added",
+    "message": "joined the project",
+    "createdAt": "2026-09-10T09:00:00.000Z"
+  },
+  {
+    "id": "act_0175",
+    "projectId": "prj_api",
+    "actorId": "usr_dev1",
+    "action": "member.added",
+    "message": "joined the project",
+    "createdAt": "2026-09-11T09:00:00.000Z"
+  },
+  {
+    "id": "act_0176",
+    "projectId": "prj_api",
+    "actorId": "usr_dev3",
+    "action": "member.added",
+    "message": "joined the project",
+    "createdAt": "2026-09-20T09:00:00.000Z"
+  },
+  {
+    "id": "act_0177",
+    "projectId": "prj_q3",
+    "actorId": "usr_owner",
+    "action": "member.added",
+    "message": "joined the project",
+    "createdAt": "2026-06-12T09:00:00.000Z"
+  },
+  {
+    "id": "act_0178",
+    "projectId": "prj_q3",
+    "actorId": "usr_member",
+    "action": "member.added",
+    "message": "joined the project",
+    "createdAt": "2026-06-22T09:00:00.000Z"
+  }
+]

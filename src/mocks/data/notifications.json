@@ -1,0 +1,47 @@
+[
+  {
+    "id": "ntf_0179",
+    "userId": "usr_owner",
+    "type": "task.assigned",
+    "message": "Marcus Reed assigned you \"Pricing page copy review\"",
+    "link": "/projects/prj_web/list",
+    "readAt": null,
+    "createdAt": "2026-10-10T07:00:00.000Z"
+  },
+  {
+    "id": "ntf_0180",
+    "userId": "usr_owner",
+    "type": "comment.added",
+    "message": "Priya Natarajan commented on \"Design new homepage hero\"",
+    "link": "/projects/prj_web/board",
+    "readAt": null,
+    "createdAt": "2026-10-09T09:00:00.000Z"
+  },
+  {
+    "id": "ntf_0181",
+    "userId": "usr_owner",
+    "type": "member.added",
+    "message": "Marcus Reed added you to Mobile App v2",
+    "link": "/projects/prj_mobile/board",
+    "readAt": "2026-09-10T09:00:00.000Z",
+    "createdAt": "2026-08-27T09:00:00.000Z"
+  },
+  {
+    "id": "ntf_0182",
+    "userId": "usr_member",
+    "type": "task.assigned",
+    "message": "Ava Chen assigned you \"Design new homepage hero\"",
+    "link": "/projects/prj_web/list",
+    "readAt": null,
+    "createdAt": "2026-10-10T04:00:00.000Z"
+  },
+  {
+    "id": "ntf_0183",
+    "userId": "usr_admin",
+    "type": "comment.added",
+    "message": "Ava Chen commented on \"Offline sync for tasks\"",
+    "link": "/projects/prj_mobile/board",
+    "readAt": null,
+    "createdAt": "2026-10-09T12:00:00.000Z"
+  }
+]

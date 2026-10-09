@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+out/
+next-env.d.ts
+
+# misc
+.DS_Store
+*.log
+*.tsbuildinfo
+
+# env files (commit .env.example only)
+.env
+.env*.local
+
+# git hook internals (recreated by `npm install`)
+.husky/_

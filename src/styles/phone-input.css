@@ -1,0 +1,161 @@
+/* ═══════════════════════════════════════════════════════════
+   PHONE INPUT - Theme adaptation (light/dark mode)
+   Only styling changes, no layout changes
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────
+   FORM CONTROL - Match theme input styling, FULL WIDTH
+   ───────────────────────────────────────────────────────── */
+.react-tel-input {
+  width: 100% !important;
+}
+
+.react-tel-input .form-control {
+  width: 100% !important;
+  border-color: hsl(var(--border)) !important;
+  background-color: hsl(var(--background)) !important;
+  color: hsl(var(--foreground)) !important;
+  border-radius: 8px !important;
+  height: 44px !important;
+  transition: all 0.2s ease !important;
+}
+
+.react-tel-input .form-control:focus {
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.15) !important;
+}
+
+.react-tel-input .form-control::placeholder {
+  color: hsl(var(--muted-foreground)) !important;
+  opacity: 0.6;
+}
+
+/* ─────────────────────────────────────────────────────────
+   FLAG DROPDOWN - Match theme styling, FULL WIDTH
+   ───────────────────────────────────────────────────────── */
+.react-tel-input .flag-dropdown {
+  border-color: hsl(var(--border)) !important;
+  background-color: hsl(var(--muted) / 0.3) !important;
+  border-radius: 8px 0 0 8px !important;
+}
+
+.react-tel-input .flag-dropdown:hover,
+.react-tel-input .flag-dropdown:focus,
+.react-tel-input .flag-dropdown:active {
+  background-color: hsl(var(--muted) / 0.5) !important;
+}
+
+.react-tel-input .flag-dropdown.open {
+  background-color: hsl(var(--muted) / 0.5) !important;
+  border-color: hsl(var(--primary)) !important;
+}
+
+/* Fix: Keep theme color when open in dark mode */
+.dark .react-tel-input .flag-dropdown.open {
+  background-color: hsl(var(--muted) / 0.6) !important;
+}
+
+/* Remove white background from selected flag on hover */
+.react-tel-input .selected-flag:hover,
+.react-tel-input .selected-flag:focus,
+.react-tel-input .selected-flag:active {
+  background-color: transparent !important;
+}
+
+/* Fix: Selected flag background when open */
+.react-tel-input .flag-dropdown.open .selected-flag {
+  background-color: transparent !important;
+}
+
+/* ─────────────────────────────────────────────────────────
+   SELECTED FLAG
+   ───────────────────────────────────────────────────────── */
+.react-tel-input .selected-flag .dial-code {
+  color: hsl(var(--foreground)) !important;
+}
+
+.react-tel-input .selected-flag .arrow {
+  border-top-color: hsl(var(--muted-foreground)) !important;
+}
+
+/* ─────────────────────────────────────────────────────────
+   COUNTRY LIST DROPDOWN
+   ───────────────────────────────────────────────────────── */
+.react-tel-input .country-list {
+  background-color: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1) !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent !important;
+}
+
+.react-tel-input .country-list .country {
+  color: hsl(var(--foreground)) !important;
+}
+
+.react-tel-input .country-list .country:hover,
+.react-tel-input .country-list .country.highlight {
+  background-color: hsl(var(--muted)) !important;
+}
+
+.react-tel-input .country-list .country.active {
+  background-color: hsl(var(--primary) / 0.1) !important;
+  color: hsl(var(--primary)) !important;
+}
+
+.react-tel-input .country-list .country .dial-code {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+.react-tel-input .country-list .country-name {
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Search input */
+.react-tel-input .country-list .search {
+  background-color: hsl(var(--card)) !important;
+}
+
+.react-tel-input .country-list .search-box {
+  border: 1px solid hsl(var(--border)) !important;
+  background-color: hsl(var(--background)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.react-tel-input .country-list .search-box:focus {
+  border-color: hsl(var(--primary)) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.15) !important;
+}
+
+/* No results */
+.react-tel-input .country-list .no-entries-message {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* ─────────────────────────────────────────────────────────
+   ERROR STATE
+   ───────────────────────────────────────────────────────── */
+.react-tel-input .form-control.invalid-number,
+.react-tel-input .form-control.input-error {
+  border-color: hsl(var(--destructive)) !important;
+  background-color: hsl(var(--destructive) / 0.05) !important;
+}
+
+.react-tel-input .flag-dropdown.invalid-number {
+  border-color: hsl(var(--destructive)) !important;
+}
+
+/* ─────────────────────────────────────────────────────────
+   DISABLED STATE
+   ───────────────────────────────────────────────────────── */
+.react-tel-input .form-control:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  background-color: hsl(var(--muted) / 0.5) !important;
+}
+
+.react-tel-input .flag-dropdown.disabled {
+  opacity: 0.5 !important;
+}

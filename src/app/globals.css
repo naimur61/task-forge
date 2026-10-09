@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════
+   🎨 THEME — Auto-generated from src/lib/theme/palette.json
+   ═══════════════════════════════════════════════════════════
+
+   HOW TO CUSTOMIZE:
+   1. Open src/lib/theme/palette.json
+   2. Change hex values (brand + light/dark surfaces)
+   3. Run: npm run theme
+
+   COLOR FORMAT: "H S L" (Hue Saturation Lightness)
+   ═══════════════════════════════════════════════════════════ */
+
+@layer base {
+  html {
+    @apply transition-colors duration-300;
+  }
+}
+
+@layer base {
+  :root {
+    --primary: 239 84% 67%;
+    --primary-50: 239 84% 97%;
+    --primary-100: 239 84% 95%;
+    --primary-200: 239 84% 90%;
+    --primary-300: 239 84% 85%;
+    --primary-400: 239 84% 75%;
+    --primary-500: 239 84% 67%;
+    --primary-600: 239 84% 57%;
+    --primary-700: 239 84% 47%;
+    --primary-800: 239 84% 37%;
+    --primary-900: 239 84% 32%;
+    --primary-950: 239 84% 27%;
+    --secondary: 330 81% 60%;
+    --accent: 0 0% 96%;
+    --highlight: 258 90% 66%;
+    --highlight-foreground: 0 0% 100%;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 9%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --success: 142 71% 45%;
+    --warning: 45 93% 47%;
+    --destructive: 0 84% 60%;
+    --info: 258 90% 66%;
+    --primary-foreground: 0 0% 100%;
+    --secondary-foreground: 0 0% 100%;
+    --accent-foreground: 0 0% 9%;
+    --success-foreground: 0 0% 100%;
+    --warning-foreground: 0 0% 100%;
+    --info-foreground: 0 0% 100%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 239 84% 67%;
+    --radius: 0.5rem;
+    --scrollbar-thumb: 0 0% 45%;
+  }
+
+  .dark {
+    --primary: 239 84% 67%;
+    --primary-50: 239 84% 27%;
+    --primary-100: 239 84% 32%;
+    --primary-200: 239 84% 37%;
+    --primary-300: 239 84% 47%;
+    --primary-400: 239 84% 57%;
+    --primary-500: 239 84% 67%;
+    --primary-600: 239 84% 75%;
+    --primary-700: 239 84% 85%;
+    --primary-800: 239 84% 90%;
+    --primary-900: 239 84% 95%;
+    --primary-950: 239 84% 97%;
+    --secondary: 330 81% 60%;
+    --accent: 0 0% 15%;
+    --highlight: 258 90% 66%;
+    --highlight-foreground: 0 0% 100%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --success: 142 76% 36%;
+    --warning: 32 95% 44%;
+    --destructive: 0 72% 51%;
+    --info: 258 90% 66%;
+    --primary-foreground: 0 0% 98%;
+    --secondary-foreground: 0 0% 98%;
+    --accent-foreground: 0 0% 98%;
+    --success-foreground: 0 0% 100%;
+    --warning-foreground: 0 0% 100%;
+    --info-foreground: 0 0% 100%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 239 84% 67%;
+    --radius: 0.5rem;
+    --scrollbar-thumb: 0 0% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer base {
+
+  /* Beautiful themed scrollbar */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Firefox */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--scrollbar-thumb, var(--muted-foreground)) / 0.4) transparent;
+  }
+
+  /* Webkit */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-button {
+    display: none !important;
+  }
+  ::-webkit-scrollbar-button:vertical:start,
+  ::-webkit-scrollbar-button:vertical:end,
+  ::-webkit-scrollbar-button:horizontal:start,
+  ::-webkit-scrollbar-button:horizontal:end,
+  ::-webkit-scrollbar-button:vertical:decrement,
+  ::-webkit-scrollbar-button:vertical:increment,
+  ::-webkit-scrollbar-button:horizontal:decrement,
+  ::-webkit-scrollbar-button:horizontal:increment {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  ::-webkit-scrollbar-track-piece:vertical:start,
+  ::-webkit-scrollbar-track-piece:vertical:end,
+  ::-webkit-scrollbar-track-piece:horizontal:start,
+  ::-webkit-scrollbar-track-piece:horizontal:end {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--scrollbar-thumb, var(--muted-foreground)) / 0.3);
+    border-radius: 3px;
+    border: 1px solid transparent;
+    background-clip: content-box;
+    transition: background-color 0.2s ease;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--scrollbar-thumb, var(--muted-foreground)) / 0.6);
+  }
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  /* For code blocks / overflow containers */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-button {
+    display: none !important;
+  }
+  .scrollbar-thin::-webkit-scrollbar-button:vertical:start,
+  .scrollbar-thin::-webkit-scrollbar-button:vertical:end,
+  .scrollbar-thin::-webkit-scrollbar-button:horizontal:start,
+  .scrollbar-thin::-webkit-scrollbar-button:horizontal:end,
+  .scrollbar-thin::-webkit-scrollbar-button:vertical:decrement,
+  .scrollbar-thin::-webkit-scrollbar-button:vertical:increment,
+  .scrollbar-thin::-webkit-scrollbar-button:horizontal:decrement,
+  .scrollbar-thin::-webkit-scrollbar-button:horizontal:increment {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track-piece:vertical:start,
+  .scrollbar-thin::-webkit-scrollbar-track-piece:vertical:end,
+  .scrollbar-thin::-webkit-scrollbar-track-piece:horizontal:start,
+  .scrollbar-thin::-webkit-scrollbar-track-piece:horizontal:end {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--scrollbar-thumb, var(--muted-foreground)) / 0.25);
+    border-radius: 3px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--scrollbar-thumb, var(--muted-foreground)) / 0.5);
+  }
+
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+}

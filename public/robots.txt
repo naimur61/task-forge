@@ -1,0 +1,9 @@
+# Robots.txt for Nexstruct generated projects
+User-agent: *
+Allow: /
+
+# Disallow API routes
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://your-domain.com/sitemap.xml

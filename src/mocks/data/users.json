@@ -1,0 +1,50 @@
+[
+  {
+    "id": "usr_owner",
+    "name": "Ava Chen",
+    "email": "owner@demo.dev",
+    "password": "Demo1234!",
+    "avatarUrl": null,
+    "createdAt": "2026-07-12T09:00:00.000Z"
+  },
+  {
+    "id": "usr_admin",
+    "name": "Marcus Reed",
+    "email": "admin@demo.dev",
+    "password": "Demo1234!",
+    "avatarUrl": null,
+    "createdAt": "2026-07-14T09:00:00.000Z"
+  },
+  {
+    "id": "usr_member",
+    "name": "Priya Natarajan",
+    "email": "member@demo.dev",
+    "password": "Demo1234!",
+    "avatarUrl": null,
+    "createdAt": "2026-07-17T09:00:00.000Z"
+  },
+  {
+    "id": "usr_dev1",
+    "name": "Diego Alvarez",
+    "email": "diego@demo.dev",
+    "password": "Demo1234!",
+    "avatarUrl": null,
+    "createdAt": "2026-07-22T09:00:00.000Z"
+  },
+  {
+    "id": "usr_dev2",
+    "name": "Sara Okafor",
+    "email": "sara@demo.dev",
+    "password": "Demo1234!",
+    "avatarUrl": null,
+    "createdAt": "2026-08-01T09:00:00.000Z"
+  },
+  {
+    "id": "usr_dev3",
+    "name": "Liam Novak",
+    "email": "liam@demo.dev",
+    "password": "Demo1234!",
+    "avatarUrl": null,
+    "createdAt": "2026-08-11T09:00:00.000Z"
+  }
+]

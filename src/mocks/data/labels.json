@@ -1,0 +1,122 @@
+[
+  {
+    "id": "lbl_0015",
+    "projectId": "prj_web",
+    "name": "Bug",
+    "color": "#ef4444"
+  },
+  {
+    "id": "lbl_0016",
+    "projectId": "prj_web",
+    "name": "Feature",
+    "color": "#6366f1"
+  },
+  {
+    "id": "lbl_0017",
+    "projectId": "prj_web",
+    "name": "Design",
+    "color": "#ec4899"
+  },
+  {
+    "id": "lbl_0018",
+    "projectId": "prj_web",
+    "name": "Docs",
+    "color": "#14b8a6"
+  },
+  {
+    "id": "lbl_0019",
+    "projectId": "prj_web",
+    "name": "Chore",
+    "color": "#64748b"
+  },
+  {
+    "id": "lbl_0020",
+    "projectId": "prj_mobile",
+    "name": "Bug",
+    "color": "#ef4444"
+  },
+  {
+    "id": "lbl_0021",
+    "projectId": "prj_mobile",
+    "name": "Feature",
+    "color": "#6366f1"
+  },
+  {
+    "id": "lbl_0022",
+    "projectId": "prj_mobile",
+    "name": "Design",
+    "color": "#ec4899"
+  },
+  {
+    "id": "lbl_0023",
+    "projectId": "prj_mobile",
+    "name": "Docs",
+    "color": "#14b8a6"
+  },
+  {
+    "id": "lbl_0024",
+    "projectId": "prj_mobile",
+    "name": "Chore",
+    "color": "#64748b"
+  },
+  {
+    "id": "lbl_0025",
+    "projectId": "prj_api",
+    "name": "Bug",
+    "color": "#ef4444"
+  },
+  {
+    "id": "lbl_0026",
+    "projectId": "prj_api",
+    "name": "Feature",
+    "color": "#6366f1"
+  },
+  {
+    "id": "lbl_0027",
+    "projectId": "prj_api",
+    "name": "Design",
+    "color": "#ec4899"
+  },
+  {
+    "id": "lbl_0028",
+    "projectId": "prj_api",
+    "name": "Docs",
+    "color": "#14b8a6"
+  },
+  {
+    "id": "lbl_0029",
+    "projectId": "prj_api",
+    "name": "Chore",
+    "color": "#64748b"
+  },
+  {
+    "id": "lbl_0030",
+    "projectId": "prj_q3",
+    "name": "Bug",
+    "color": "#ef4444"
+  },
+  {
+    "id": "lbl_0031",
+    "projectId": "prj_q3",
+    "name": "Feature",
+    "color": "#6366f1"
+  },
+  {
+    "id": "lbl_0032",
+    "projectId": "prj_q3",
+    "name": "Design",
+    "color": "#ec4899"
+  },
+  {
+    "id": "lbl_0033",
+    "projectId": "prj_q3",
+    "name": "Docs",
+    "color": "#14b8a6"
+  },
+  {
+    "id": "lbl_0034",
+    "projectId": "prj_q3",
+    "name": "Chore",
+    "color": "#64748b"
+  }
+]

@@ -1,0 +1,15 @@
+/* Task status colors. Validated for color-blind safety in light and dark mode.
+   Used by status dots, badges and dashboard charts. */
+:root {
+  --status-todo: #2a78d6;
+  --status-in-progress: #eb6834;
+  --status-in-review: #4a3aa7;
+  --status-done: #1baf7a;
+}
+
+.dark {
+  --status-todo: #3987e5;
+  --status-in-progress: #d95926;
+  --status-in-review: #9085e9;
+  --status-done: #199e70;
+}
