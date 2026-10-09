@@ -29,7 +29,7 @@ Workflow per stage: `git checkout -b <branch>` → build → `npm run typecheck 
 - [x] 6. `feat/kanban-board`: Board tab, dnd-kit drag & drop (mouse/touch/keyboard), optimistic move + rollback, quick add per column
 - [x] 7. `feat/members`: members table, add member with user search, change role, remove, leave, transfer ownership
 - [x] 8. `feat/project-settings`: settings (edit, archive/restore, delete with typed confirm)
-- [ ] 9. `feat/notifications-account`: notifications page (mark read / all), account (profile, password, theme)
+- [x] 9. `feat/notifications-account`: notifications page (mark read / all), account (profile, password, theme)
 - [ ] 10. `feat/auth-pages`: split-layout login/register with demo hint, global not-found / error pages
 - [ ] 11. `feat/skeletons`: boneyard-js bones build for every loading surface, registry import
 - [ ] 12. `feat/command-palette`: Cmd+K palette, keyboard shortcuts (c, /, g d, ?)
