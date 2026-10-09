@@ -4,6 +4,7 @@ import { projectRoutes } from './routes/projects';
 import { memberRoutes } from './routes/members';
 import { taskRoutes } from './routes/tasks';
 import { dashboardRoutes } from './routes/dashboard';
+import { broadcastChange } from './realtime';
 
 /** Every mock endpoint. The first matching route wins. */
 const ROUTES: MockRoute[] = [...authRoutes, ...projectRoutes, ...memberRoutes, ...taskRoutes, ...dashboardRoutes];
@@ -49,7 +50,14 @@ export async function handleMockRequest(req: Request, path: string): Promise<Res
 
     const query = new URL(req.url).searchParams;
     const body = await readJson(req);
-    return route.handler({ req, params, query, body, userId });
+    const res = await route.handler({ req, params, query, body, userId });
+
+    // Successful changes are pushed to everyone watching (see src/mocks/realtime.ts).
+    if (res.ok && req.method !== 'GET' && userId) {
+      const data = res.status === 204 ? undefined : (await res.clone().json().catch(() => ({})))?.data;
+      broadcastChange(`${route.method} ${route.path}`, params, body, userId, data);
+    }
+    return res;
   }
 
   return fail(404, 'ROUTE_NOT_FOUND', `No mock for ${req.method} ${path}`);

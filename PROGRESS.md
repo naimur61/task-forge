@@ -35,9 +35,9 @@ Workflow per stage: `git checkout -b <branch>` → build → `npm run typecheck 
 - [x] 12. `feat/command-palette`: Cmd+K palette, keyboard shortcuts (c, /, g d, ?)
 - [x] 13. `test/unit`: Vitest, 27 tests in `tests/unit/` (permissions, schemas + converters, due dates, mock API auth/filters/403/404/422). Run `npm test`
 - [x] 14. `docs/readme`: README (features, demo logins, backend contract, structure, decisions), screenshots in `docs/screenshots/`, production build passes, dashboard charts lazy-loaded
+- [x] 15. `feat/realtime`: socket.io live updates. Demo server `npm run socket` (:4001) joins users to project/user rooms after checking their token; mock API broadcasts every change; client refreshes caches, shows notification toasts, kicks removed members out, Live/Offline indicator, auto-reconnect
 
 ## Next ideas (not started)
-- Real-time updates over socket.io (patch React Query caches on `task.updated`, `comment.added`, `member.removed`)
 - Playwright e2e for the main flows, Lighthouse/a11y audit
 - Labels management UI, file attachments, bulk actions
 
