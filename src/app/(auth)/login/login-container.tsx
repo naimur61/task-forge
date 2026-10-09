@@ -11,6 +11,8 @@ import { safeRedirectPath } from '@/auth/jwt/config';
 import { loginSchema } from '@/auth/jwt/validators';
 import { AuthCard } from '@/components/features/auth/auth-card';
 import { LoginForm } from '@/components/features/auth/login-form';
+import { DEMO_PASSWORD, DemoHint } from '@/components/features/auth/demo-hint';
+import { IS_DEMO_API } from '@/config/site';
 
 export default function LoginContainer() {
   const router = useRouter();
@@ -50,6 +52,14 @@ export default function LoginContainer() {
         </>
       }
     >
+      {IS_DEMO_API && (
+        <DemoHint
+          onPick={(email) => {
+            form.setValue('email', email, { shouldValidate: true });
+            form.setValue('password', DEMO_PASSWORD, { shouldValidate: true });
+          }}
+        />
+      )}
       <LoginForm form={form} onSubmit={onSubmit} isLoading={form.formState.isSubmitting} error={error} />
     </AuthCard>
   );
