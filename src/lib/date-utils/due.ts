@@ -1,7 +1,8 @@
 import { differenceInCalendarDays, format } from 'date-fns';
 
-/** Short due-date text: "Today", "Tomorrow", "2d overdue", or "Oct 12". */
-export function formatDue(dueDate: string): string {
+/** Short due-date text: "Today", "Tomorrow", "2d overdue", or "Oct 12". Finished tasks always show the date. */
+export function formatDue(dueDate: string, isDone = false): string {
+  if (isDone) return format(new Date(dueDate), 'MMM d');
   const days = differenceInCalendarDays(new Date(dueDate), new Date());
   if (days === 0) return 'Today';
   if (days === 1) return 'Tomorrow';
