@@ -6,6 +6,8 @@ import { QueryProvider } from '@/providers/query-provider';
 import { AuthProvider } from '@/providers/auth-provider';
 import { LayoutProvider } from '@/providers/layout-provider';
 import { ToastProvider } from '@/providers/toast-provider';
+// Registers every generated skeleton (run `npx boneyard-js build` to refresh them).
+import '@/bones/registry';
 
 /**
  * App-wide providers, composed by Nexstruct for the options you selected.
