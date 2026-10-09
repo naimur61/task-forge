@@ -4,6 +4,8 @@
 
 ---
 
+> **Status (2026-10-10):** core path and stretch phases 1, 2, 4 are built; see `PROGRESS.md`. Changes from this plan: route protection uses the client `RequireAuth` guard (the refresh cookie lives on the API domain, so `middleware.ts` can't read it); the list uses `ui/table` with server-side sort/pagination instead of TanStack Table; date and assignee pickers reuse the existing `CustomField` inputs instead of new Calendar/Combobox primitives.
+
 ## 1. Goals & Requirement Traceability
 
 | Brief criterion | How the frontend delivers it | Priority |
