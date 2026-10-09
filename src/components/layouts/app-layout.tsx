@@ -29,7 +29,7 @@ export function AppLayout({ children, headerActions }: AppLayoutProps) {
       <div
         className={cn(
           'flex min-h-screen flex-col transition-[margin] duration-200',
-          state.isLeftSidebarOpen ? 'md:ml-64' : 'md:ml-16',
+          state.isLeftSidebarOpen ? 'md:ml-16 lg:ml-64' : 'md:ml-16',
         )}
       >
         <TopNavbar actions={headerActions} />
