@@ -31,7 +31,7 @@ Workflow per stage: `git checkout -b <branch>` → build → `npm run typecheck 
 - [x] 8. `feat/project-settings`: settings (edit, archive/restore, delete with typed confirm)
 - [x] 9. `feat/notifications-account`: notifications page (mark read / all), account (profile, password, theme)
 - [x] 10. `feat/auth-pages`: split-layout login/register with demo hint, global not-found / error pages
-- [ ] 11. `feat/skeletons`: boneyard-js bones build for every loading surface, registry import
+- [x] 11. `feat/skeletons`: boneyard-js bones for 13 loading surfaces, registry imported in providers. Refresh with `npm run bones` (dev server on :3000)
 - [ ] 12. `feat/command-palette`: Cmd+K palette, keyboard shortcuts (c, /, g d, ?)
 - [ ] 13. `test/unit`: Vitest unit tests (permissions, schemas, url state, mock filters), `npm test`
 - [ ] 14. `docs/readme`: README (features, demo logins, switch to real backend, architecture, decisions)

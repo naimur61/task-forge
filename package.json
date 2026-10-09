@@ -13,7 +13,8 @@
     "typecheck": "tsc --noEmit",
     "theme": "node scripts/theme.mjs",
     "theme:preset": "node scripts/theme-preset.mjs",
-    "prepare": "husky"
+    "prepare": "husky",
+    "bones": "boneyard-js build http://localhost:3000/dashboard http://localhost:3000/projects http://localhost:3000/projects/prj_web/board http://localhost:3000/projects/prj_web/list http://localhost:3000/projects/prj_web/members http://localhost:3000/projects/prj_web/activity http://localhost:3000/notifications --cookie tf_mock_refresh=usr_owner --no-scan"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
