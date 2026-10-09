@@ -21,7 +21,7 @@ If a task is truly blocked, mark it `[!]` with the reason and move to the next o
 Workflow per stage: `git checkout -b <branch>` → build → `npm run typecheck && npm run lint` → browser test (owner + member accounts, light + dark) → tick here → commit → `git merge --no-ff` into main → `git push origin main <branch>`.
 
 - [x] 0. `main`: git init + foundation commit (everything above), push
-- [ ] 1. `feat/dashboard`: stat cards, status/priority/trend charts, my tasks, recent activity, new-user empty state
+- [x] 1. `feat/dashboard`: stat cards, status/priority/trend charts, my tasks, recent activity, new-user empty state
 - [ ] 2. `feat/projects`: projects list (search, status, grid/list, pagination), create project dialog
 - [ ] 3. `feat/project-workspace`: project layout (header, tabs, 404 for non-members), shared `[projectId]/service.ts`
 - [ ] 4. `feat/task-list`: List tab with URL-synced search/filter/sort/pagination, filter chips, table (desktop) / cards (mobile), quick status change
