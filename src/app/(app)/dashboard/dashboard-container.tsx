@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from 'boneyard-js/react';
 import { FolderPlus } from 'lucide-react';
@@ -9,14 +10,20 @@ import { ErrorState } from '@/components/common/error-state/error-state';
 import { PageHeader } from '@/components/common/page-header/page-header';
 import { ActivityFeed } from '@/components/features/activity/activity-feed';
 import { ChartCard } from '@/components/features/dashboard/chart-card';
-import { CompletionTrend } from '@/components/features/dashboard/completion-trend';
 import { MyTasksList } from '@/components/features/dashboard/my-tasks-list';
-import { PriorityChart } from '@/components/features/dashboard/priority-chart';
 import { StatCards } from '@/components/features/dashboard/stat-cards';
 import { StatusBreakdown } from '@/components/features/dashboard/status-breakdown';
 import { DASHBOARD_FIXTURE, MY_TASKS_FIXTURE } from '@/mocks/fixtures/dashboard';
 import { useAuth } from '@/hooks/use-auth';
 import { useDashboardSummary, useMyTasks } from './service';
+
+// Charts pull in Recharts (~100 kB), so they load after the rest of the page.
+const PriorityChart = dynamic(() => import('@/components/features/dashboard/priority-chart').then((m) => m.PriorityChart), {
+  ssr: false,
+});
+const CompletionTrend = dynamic(() => import('@/components/features/dashboard/completion-trend').then((m) => m.CompletionTrend), {
+  ssr: false,
+});
 
 export default function DashboardContainer() {
   const router = useRouter();
