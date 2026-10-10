@@ -5,6 +5,8 @@ Project and task management for small teams: projects, a kanban board, a filtera
 ![Dashboard](docs/screenshots/dashboard.jpg)
 ![Board](docs/screenshots/board.jpg)
 
+> **Presenting this project?** Read the [Project Guide](docs/PROJECT_GUIDE.md): architecture, roles and permissions, demo script and likely questions.
+
 ## Features
 
 - **Auth**: sign up, sign in, silent session refresh (access token in memory, refresh token in an httpOnly cookie), protected pages, demo accounts.
