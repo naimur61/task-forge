@@ -23,8 +23,10 @@ interface TaskCreateDialogProps {
 /** "New task" dialog. State lives in the container. */
 export function TaskCreateDialog({ open, onOpenChange, form, members, labels, onSubmit, isPending, error }: TaskCreateDialogProps) {
   // Ask before throwing away typed changes.
+  // Read isDirty during render: react-hook-form only tracks form state that is read here.
+  const { isDirty } = form.formState;
   const handleOpenChange = (next: boolean) => {
-    if (!next && form.formState.isDirty && !isPending && !window.confirm('Discard this task?')) return;
+    if (!next && isDirty && !isPending && !window.confirm('Discard this task?')) return;
     onOpenChange(next);
   };
 
