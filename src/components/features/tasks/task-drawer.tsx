@@ -52,8 +52,10 @@ export function TaskDrawer({
   comments,
 }: TaskDrawerProps) {
   // Ask before throwing away unsaved edits.
+  // Read isDirty during render: react-hook-form only tracks form state that is read here.
+  const { isDirty } = form.formState;
   const handleOpenChange = (next: boolean) => {
-    if (!next && form.formState.isDirty && !window.confirm('Discard your unsaved changes?')) return;
+    if (!next && isDirty && !window.confirm('Discard your unsaved changes?')) return;
     if (!next) onClose();
   };
 
@@ -93,7 +95,7 @@ export function TaskDrawer({
                     <span />
                   )}
                   {canEdit && (
-                    <ActionButton type="submit" isPending={isSaving} disabled={!form.formState.isDirty} loadingContent="Saving…">
+                    <ActionButton type="submit" isPending={isSaving} disabled={!isDirty} loadingContent="Saving…">
                       Save changes
                     </ActionButton>
                   )}

@@ -3,14 +3,16 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   closestCorners,
+  pointerWithin,
   DndContext,
   DragOverlay,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
   TouchSensor,
   useDroppable,
   useSensor,
   useSensors,
+  type CollisionDetection,
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
@@ -57,6 +59,15 @@ function moveCard(board: BoardColumns, taskId: string, status: TaskStatus, overI
 }
 
 /**
+ * Drop where the finger or mouse is. Falls back to the closest card for keyboard moves.
+ * (Measuring the card's corners picked the wrong column on phones, where a card is as wide as a column.)
+ */
+const boardCollision: CollisionDetection = (args) => {
+  const underPointer = pointerWithin(args);
+  return underPointer.length > 0 ? underPointer : closestCorners(args);
+};
+
+/**
  * Keyboard moves: Left/Right jump to the next column, Up/Down move inside the column.
  */
 const boardKeyboardCoordinates: KeyboardCoordinateGetter = (event, args) => {
@@ -88,8 +99,10 @@ export function KanbanBoard({ columns, onOpen, canMove, onMove, onQuickAdd }: Ka
   }, [columns]);
 
   const sensors = useSensors(
-    // A small move is needed before dragging starts, so plain clicks still open the task.
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    // Mouse: a small move starts the drag, so plain clicks still open the task.
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    // Touch: press and hold, so a normal swipe still scrolls the columns.
+    // (Separate mouse/touch sensors: a pointer sensor would grab touches without the hold.)
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 6 } }),
     // Space picks up and drops; Enter is kept for opening the task.
     useSensor(KeyboardSensor, {
@@ -150,14 +163,22 @@ export function KanbanBoard({ columns, onOpen, canMove, onMove, onQuickAdd }: Ka
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCorners}
+      collisionDetection={boardCollision}
+      // Gentle edge scrolling: on phones the default speed skipped whole columns.
+      autoScroll={{ acceleration: 4, threshold: { x: 0.12, y: 0.15 } }}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
       {/* Phones: swipe between columns. Desktop: all four side by side. */}
-      <div className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-4 md:mx-0 md:scroll-px-0 md:px-0 lg:grid lg:grid-cols-4 lg:overflow-visible">
+      {/* Snapping is off while dragging: with it on, every small edge-scroll jumped a whole column. */}
+      <div
+        className={cn(
+          '-mx-4 flex scroll-px-4 gap-4 overflow-x-auto px-4 pb-4 md:mx-0 md:scroll-px-0 md:px-0 lg:grid lg:grid-cols-4 lg:overflow-visible',
+          activeTask ? 'snap-none' : 'snap-x snap-mandatory',
+        )}
+      >
         {TASK_STATUSES.map((status) => (
           <BoardColumn
             key={status.value}
