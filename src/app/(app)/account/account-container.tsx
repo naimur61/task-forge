@@ -68,7 +68,7 @@ export default function AccountContainer() {
   if (!user) return null;
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="space-y-6">
       <PageHeader
         title="Account"
         description="Your profile, password and appearance."

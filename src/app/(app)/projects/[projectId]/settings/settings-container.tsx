@@ -55,7 +55,7 @@ export default function SettingsContainer() {
   }
 
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="space-y-6">
       <ProjectSettingsForm form={form} onSubmit={onSubmit} isPending={updateProject.isPending} error={formError} />
 
       {can(project.myRole, 'label.manage') && (
