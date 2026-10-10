@@ -100,7 +100,7 @@ export default function DashboardContainer() {
                 <ErrorState error={myTasksQuery.error} onRetry={() => myTasksQuery.refetch()} />
               ) : (
                 <Skeleton name="dashboard-my-tasks" loading={myTasksQuery.isPending} fixture={<MyTasksList tasks={MY_TASKS_FIXTURE} />}>
-                  <MyTasksList tasks={myTasksQuery.data?.data ?? []} />
+                  <MyTasksList tasks={myTasksQuery.data?.data ?? []} total={myTasksQuery.data?.meta.total} />
                 </Skeleton>
               )}
             </ChartCard>

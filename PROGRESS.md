@@ -36,10 +36,11 @@ Workflow per stage: `git checkout -b <branch>` → build → `npm run typecheck 
 - [x] 13. `test/unit`: Vitest, 27 tests in `tests/unit/` (permissions, schemas + converters, due dates, mock API auth/filters/403/404/422). Run `npm test`
 - [x] 14. `docs/readme`: README (features, demo logins, backend contract, structure, decisions), screenshots in `docs/screenshots/`, production build passes, dashboard charts lazy-loaded
 - [x] 15. `feat/realtime`: socket.io live updates. Demo server `npm run socket` (:4001) joins users to project/user rooms after checking their token; mock API broadcasts every change; client refreshes caches, shows notification toasts, kicks removed members out, Live/Offline indicator, auto-reconnect
+- [x] 16. `fix/role-walkthrough`: end-to-end walkthrough as PM (owner), team lead (admin), developer (member) and tester. Fixed: board drag preview + drop animation across columns, phone dialogs as bottom sheets (`ui/custom/dialog.tsx`), select lists clipped inside dialogs (now portaled, Escape returns focus), clearable required selects, labels management in Settings, reduced-motion support, locked-card hint, "Showing X of Y" on My tasks
 
 ## Next ideas (not started)
 - Playwright e2e for the main flows, Lighthouse/a11y audit
-- Labels management UI, file attachments, bulk actions
+- File attachments, bulk actions, rename/delete labels
 
 ## Notes
 - Untracked `public/planning.png`, `public/prioritize.png` and the modified `public/favicon.ico` were added outside these stages and are left for the owner to commit.

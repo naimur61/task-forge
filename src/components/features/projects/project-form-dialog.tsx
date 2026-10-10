@@ -4,7 +4,7 @@ import type { UseFormReturn } from 'react-hook-form';
 import { ActionButton } from '@/components/common/button';
 import { CustomField } from '@/components/common/fields/cus-input-field';
 import { ErrorAlert } from '@/components/common/error-alert/error-alert';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/custom/dialog';
 import type { ProjectFormData } from '@/components/common/forms/schemas/project';
 
 interface ProjectFormDialogProps {
