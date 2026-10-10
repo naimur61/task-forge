@@ -21,7 +21,7 @@ export function AppLayout({ children, headerActions }: AppLayoutProps) {
     <div className="min-h-screen bg-background">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:shadow"
+        className="sr-only focus:fixed focus:top-4 focus:left-4 focus:py-2 focus:px-4 focus:text-sm focus:rounded-md focus:shadow focus:not-sr-only focus:z-[60] focus:bg-background"
       >
         Skip to content
       </a>
@@ -33,8 +33,8 @@ export function AppLayout({ children, headerActions }: AppLayoutProps) {
         )}
       >
         <TopNavbar actions={headerActions} />
-        <main id="main-content" className="flex-1 bg-muted/30 p-4 md:p-6">
-          <div className="mx-auto w-full max-w-7xl">{children}</div>
+        <main id="main-content" className="flex-1 p-4 md:p-6 bg-muted/30">
+          <div className="mx-auto w-full">{children}</div>
         </main>
       </div>
       <MobileNav />

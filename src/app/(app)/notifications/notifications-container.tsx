@@ -31,7 +31,7 @@ export default function NotificationsContainer() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="space-y-6">
       <PageHeader
         title="Notifications"
         description={meta?.unread ? `${meta.unread} unread` : 'Updates about your tasks and projects.'}
