@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { Check, ChevronDown, Loader2, Search, X } from 'lucide-react';
 import Image from 'next/image';
 import * as React from 'react';
+import * as PopoverPrimitive from '@radix-ui/react-popover';
 import { FieldLabel } from './field-label';
 
 interface Option {
@@ -34,6 +35,8 @@ interface SelectFieldProps {
   isLoading?: boolean;
   onSearch?: (query: string) => void;
   customMessage?: string;
+  /** Show the "clear" button. Turn off for required fields that always need a value. */
+  clearable?: boolean;
 }
 
 interface SelectControlProps extends SelectFieldProps {
@@ -46,7 +49,7 @@ const SelectControl = React.forwardRef<HTMLDivElement, SelectControlProps>(
     form, name, labelName, required = false, disabled = false,
     options = [], placeholder = 'Select an option', showSearch = true,
     isImageShow = false, isFlag = false, type = 'single', viewOnly = false,
-    onValueChange, isLoading = false, onSearch, customMessage, fieldValue, onBlur,
+    onValueChange, isLoading = false, onSearch, customMessage, clearable = true, fieldValue, onBlur,
   }, ref) => {
     const normalizedOptions: Option[] = React.useMemo(
       () => (options || []).map((opt: RawOption) =>
@@ -59,7 +62,7 @@ const SelectControl = React.forwardRef<HTMLDivElement, SelectControlProps>(
     const [searchValue, setSearchValue] = React.useState('');
     const [showMore, setShowMore] = React.useState(false);
     const triggerRef = React.useRef<HTMLButtonElement>(null);
-    const dropdownRef = React.useRef<HTMLDivElement>(null);
+    const anchorRef = React.useRef<HTMLDivElement>(null);
     const searchInputRef = React.useRef<HTMLInputElement>(null);
 
     const selectedValues = React.useMemo<string[]>(() => {
@@ -109,20 +112,6 @@ const SelectControl = React.forwardRef<HTMLDivElement, SelectControlProps>(
       if (restoreFocus) triggerRef.current?.focus();
     }, [onBlur]);
 
-    React.useEffect(() => {
-      const handler = (e: MouseEvent) => {
-        if (
-          dropdownRef.current && !dropdownRef.current.contains(e.target as Node) &&
-          !triggerRef.current?.contains(e.target as Node)
-        ) closeDropdown(false);
-      };
-      if (isOpen) {
-        document.addEventListener('mousedown', handler);
-        searchInputRef.current?.focus();
-      }
-      return () => document.removeEventListener('mousedown', handler);
-    }, [isOpen, closeDropdown]);
-
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Escape' && isOpen) {
         e.stopPropagation();
@@ -144,8 +133,12 @@ const SelectControl = React.forwardRef<HTMLDivElement, SelectControlProps>(
               : selectedOptions[0]?.label || ''}
           </div>
         ) : (
+          // The list opens in a portal, so dialogs and scroll areas never clip it.
+          <PopoverPrimitive.Root open={isOpen} onOpenChange={(open) => !open && closeDropdown(false)}>
           <div className="relative" onKeyDown={handleKeyDown}>
+            <PopoverPrimitive.Anchor asChild>
             <div
+              ref={anchorRef}
               className={cn(
                 'relative w-full min-h-11 rounded-lg border border-input bg-background px-3 py-2 flex items-center justify-between gap-2',
                 'hover:bg-muted/50 transition-colors text-sm focus-within:ring-2 focus-within:ring-ring',
@@ -204,7 +197,7 @@ const SelectControl = React.forwardRef<HTMLDivElement, SelectControlProps>(
                 </FormControl>
               </div>
               <div className="flex items-center gap-1">
-                {selectedOptions.length > 0 && (
+                {clearable && selectedOptions.length > 0 && (
                   <button
                     type="button"
                     aria-label="Clear selection"
@@ -220,9 +213,31 @@ const SelectControl = React.forwardRef<HTMLDivElement, SelectControlProps>(
                   : <ChevronDown className="w-4 h-4" aria-hidden="true" />}
               </div>
             </div>
+            </PopoverPrimitive.Anchor>
 
-            {isOpen && (
-              <div ref={dropdownRef} className="absolute z-50 w-full mt-1 bg-popover text-popover-foreground border rounded-lg shadow-md">
+            <PopoverPrimitive.Portal>
+              <PopoverPrimitive.Content
+                align="start"
+                sideOffset={4}
+                collisionPadding={8}
+                // Escape closes only this list (not a surrounding dialog) and returns focus to the field.
+                onEscapeKeyDown={(e) => {
+                  e.stopPropagation();
+                  closeDropdown(true);
+                }}
+                // Start typing in the search box right away.
+                onOpenAutoFocus={(e) => {
+                  if (!showSearch) return;
+                  e.preventDefault();
+                  searchInputRef.current?.focus();
+                }}
+                onCloseAutoFocus={(e) => e.preventDefault()}
+                // Clicking the field itself toggles the list; don't treat it as an outside click.
+                onInteractOutside={(e) => {
+                  if (anchorRef.current?.contains(e.target as Node)) e.preventDefault();
+                }}
+                className="z-50 w-[var(--radix-popper-anchor-width)] rounded-lg border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2"
+              >
                 {showSearch && (
                   <div className="p-2 border-b">
                     <div className="relative">
@@ -277,9 +292,10 @@ const SelectControl = React.forwardRef<HTMLDivElement, SelectControlProps>(
                     );
                   })}
                 </div>
-              </div>
-            )}
+              </PopoverPrimitive.Content>
+            </PopoverPrimitive.Portal>
           </div>
+          </PopoverPrimitive.Root>
         )}
 
         <FormMessage />

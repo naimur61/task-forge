@@ -5,6 +5,7 @@ import { Providers } from '@/providers';
 import { siteConfig } from '@/config/site';
 import './globals.css';
 import '@/styles/status-colors.css';
+import '@/styles/motion.css';
 
 // Bundled Inter variable font — no network dependency at build/dev time.
 const inter = localFont({

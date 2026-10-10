@@ -101,6 +101,16 @@ export const useTransferOwnership = (projectId: string) =>
 export const useLabels = (projectId: string) =>
   useFetchData<ApiResponse<Label[]>>({ path: `projects/${projectId}/labels`, queryKey: labelKeys.list(projectId) });
 
+/** Create a label (owner/admin). */
+export const useCreateLabel = (projectId: string, onDone: () => void) =>
+  useApiMutation<ApiResponse<Label>, { name: string; color: string }>({
+    method: 'POST',
+    path: `projects/${projectId}/labels`,
+    invalidate: [labelKeys.list(projectId)],
+    successMessage: 'Label created',
+    onSuccess: onDone,
+  });
+
 /* ---------- Tasks ---------- */
 
 /** One page of tasks with filters and sort (list view). */
