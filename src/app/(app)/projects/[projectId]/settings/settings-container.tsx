@@ -9,9 +9,10 @@ import { useZodForm } from '@/components/common/forms/hooks/use-form';
 import { projectSchema } from '@/components/common/forms/schemas/project';
 import { ProjectDangerZone } from '@/components/features/projects/project-danger-zone';
 import { ProjectSettingsForm } from '@/components/features/projects/project-settings-form';
+import { LABEL_COLORS, ProjectLabels } from '@/components/features/projects/project-labels';
 import { applyServerErrors } from '@/lib/http/form-errors';
 import { can } from '@/lib/permissions';
-import { useProject } from '../service';
+import { useCreateLabel, useLabels, useProject } from '../service';
 import { useDeleteProject, useSetArchived, useUpdateProject } from './service';
 
 export default function SettingsContainer() {
@@ -25,6 +26,12 @@ export default function SettingsContainer() {
   const updateProject = useUpdateProject(projectId);
   const setArchived = useSetArchived(projectId);
   const deleteProject = useDeleteProject(projectId, () => router.replace('/projects'));
+
+  // Labels
+  const labels = useLabels(projectId).data?.data ?? [];
+  const [labelName, setLabelName] = useState('');
+  const [labelColor, setLabelColor] = useState(LABEL_COLORS[0]);
+  const createLabel = useCreateLabel(projectId, () => setLabelName(''));
 
   // Fill the form whenever the project (re)loads.
   useEffect(() => {
@@ -50,6 +57,18 @@ export default function SettingsContainer() {
   return (
     <div className="max-w-3xl space-y-6">
       <ProjectSettingsForm form={form} onSubmit={onSubmit} isPending={updateProject.isPending} error={formError} />
+
+      {can(project.myRole, 'label.manage') && (
+        <ProjectLabels
+          labels={labels}
+          name={labelName}
+          onNameChange={setLabelName}
+          color={labelColor}
+          onColorChange={setLabelColor}
+          onCreate={() => createLabel.mutate({ name: labelName.trim(), color: labelColor })}
+          isPending={createLabel.isPending}
+        />
+      )}
 
       {can(project.myRole, 'project.delete') && (
         <ProjectDangerZone

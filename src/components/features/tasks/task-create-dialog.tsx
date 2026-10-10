@@ -4,7 +4,7 @@ import type { UseFormReturn } from 'react-hook-form';
 import { ActionButton } from '@/components/common/button';
 import { ErrorAlert } from '@/components/common/error-alert/error-alert';
 import type { TaskFormData } from '@/components/common/forms/schemas/task';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/custom/dialog';
 import type { Member } from '@/types/member';
 import type { Label } from '@/types/task';
 import { TaskFormFields } from './task-form-fields';

@@ -3,7 +3,7 @@
 import { Check, Loader2, Search } from 'lucide-react';
 import { ActionButton } from '@/components/common/button';
 import { UserAvatar } from '@/components/common/user-avatar/user-avatar';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/custom/dialog';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import type { UserSummary } from '@/types/common';

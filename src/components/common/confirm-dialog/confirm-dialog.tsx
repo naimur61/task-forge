@@ -9,7 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/components/ui/custom/dialog';
 import { Input } from '@/components/ui/input';
 
 interface ConfirmDialogProps {

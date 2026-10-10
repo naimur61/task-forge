@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   closestCorners,
   DndContext,
@@ -16,7 +16,7 @@ import {
   type DragStartEvent,
   type KeyboardCoordinateGetter,
 } from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Plus } from 'lucide-react';
 import { TASK_STATUSES } from '@/config/task';
@@ -43,25 +43,17 @@ function findColumn(columns: BoardColumns, id: string): TaskStatus | undefined {
   return TASK_STATUSES.find((s) => columns[s.value].some((t) => t.id === id))?.value;
 }
 
-/**
- * Work out where a dropped card should go.
- * Dropping on a card puts it in that card's place; dropping on empty column space puts it last.
- */
-function dropTarget(columns: BoardColumns, activeId: string, overId: string) {
-  const status = findColumn(columns, overId);
-  if (!status) return null;
-  const column = columns[status];
-  const others = column.filter((t) => t.id !== activeId);
-
-  // Dropped on the column itself → end of the list.
-  if (overId === status) return { status, afterId: others.at(-1)?.id ?? null };
-
-  const overIndex = column.findIndex((t) => t.id === overId);
-  const activeIndex = column.findIndex((t) => t.id === activeId);
-  // Moving down inside the same column lands below the target, otherwise above it.
-  const placeBelow = activeIndex !== -1 && activeIndex < overIndex;
-  const indexInOthers = others.findIndex((t) => t.id === overId) + (placeBelow ? 1 : 0);
-  return { status, afterId: indexInOthers > 0 ? others[indexInOthers - 1].id : null };
+/** Move a task (by id) into `status`, just before the card `overId` (or at the end). */
+function moveCard(board: BoardColumns, taskId: string, status: TaskStatus, overId: string): BoardColumns {
+  const from = findColumn(board, taskId);
+  if (!from) return board;
+  const task = board[from].find((t) => t.id === taskId)!;
+  const next = { ...board, [from]: board[from].filter((t) => t.id !== taskId) };
+  const target = next[status];
+  const overIndex = target.findIndex((t) => t.id === overId);
+  const index = overIndex === -1 ? target.length : overIndex;
+  next[status] = [...target.slice(0, index), task, ...target.slice(index)];
+  return next;
 }
 
 /**
@@ -84,9 +76,16 @@ const boardKeyboardCoordinates: KeyboardCoordinateGetter = (event, args) => {
 
 /** Kanban board: one column per status, drag cards with mouse, touch or keyboard. */
 export function KanbanBoard({ columns, onOpen, canMove, onMove, onQuickAdd }: KanbanBoardProps) {
+  // Local copy of the board: cards move here while dragging, so the preview and
+  // the drop animation show exactly where the card will land.
+  const [board, setBoard] = useState<BoardColumns>(columns);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  // Column under the dragged card, highlighted as the drop target.
-  const [overStatus, setOverStatus] = useState<TaskStatus | null>(null);
+  const isDragging = useRef(false);
+
+  // Follow the server data, except in the middle of a drag.
+  useEffect(() => {
+    if (!isDragging.current) setBoard(columns);
+  }, [columns]);
 
   const sensors = useSensors(
     // A small move is needed before dragging starts, so plain clicks still open the task.
@@ -99,29 +98,54 @@ export function KanbanBoard({ columns, onOpen, canMove, onMove, onQuickAdd }: Ka
     }),
   );
 
-  const allTasks = TASK_STATUSES.flatMap((s) => columns[s.value]);
-
   const handleDragStart = ({ active }: DragStartEvent) => {
-    setActiveTask(allTasks.find((t) => t.id === active.id) ?? null);
+    isDragging.current = true;
+    setActiveTask(TASK_STATUSES.flatMap((s) => board[s.value]).find((t) => t.id === active.id) ?? null);
   };
 
-  const handleDragOver = ({ over }: DragOverEvent) => {
-    setOverStatus(over ? (findColumn(columns, String(over.id)) ?? null) : null);
+  // Moving over another column: move the card there right away (live preview).
+  const handleDragOver = ({ active, over }: DragOverEvent) => {
+    if (!over) return;
+    const from = findColumn(board, String(active.id));
+    const to = findColumn(board, String(over.id));
+    if (!from || !to || from === to) return;
+    setBoard((current) => moveCard(current, String(active.id), to, String(over.id)));
   };
 
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
+    isDragging.current = false;
     setActiveTask(null);
-    setOverStatus(null);
-    const task = allTasks.find((t) => t.id === active.id);
-    if (!task || !over || active.id === over.id) return;
-    const target = dropTarget(columns, String(active.id), String(over.id));
-    if (!target) return;
-    // Skip drops that don't change anything.
-    const column = columns[task.status];
-    const currentAfter = column[column.findIndex((t) => t.id === task.id) - 1]?.id ?? null;
-    if (target.status === task.status && target.afterId === currentAfter) return;
-    onMove(task, target.status, target.afterId);
+    const original = TASK_STATUSES.flatMap((s) => columns[s.value]).find((t) => t.id === active.id);
+    const status = findColumn(board, String(active.id));
+    if (!original || !status) return setBoard(columns);
+
+    // Reordering inside the final column.
+    let finalBoard = board;
+    const column = board[status];
+    const oldIndex = column.findIndex((t) => t.id === active.id);
+    const newIndex = over ? column.findIndex((t) => t.id === over.id) : -1;
+    if (newIndex !== -1 && newIndex !== oldIndex) {
+      finalBoard = { ...board, [status]: arrayMove(column, oldIndex, newIndex) };
+      setBoard(finalBoard);
+    }
+
+    // Tell the parent where it landed, unless nothing changed.
+    const finalColumn = finalBoard[status];
+    const afterId = finalColumn[finalColumn.findIndex((t) => t.id === active.id) - 1]?.id ?? null;
+    const before = columns[original.status];
+    const originalAfter = before[before.findIndex((t) => t.id === active.id) - 1]?.id ?? null;
+    if (status === original.status && afterId === originalAfter) return;
+    onMove(original, status, afterId);
   };
+
+  const handleDragCancel = () => {
+    isDragging.current = false;
+    setActiveTask(null);
+    setBoard(columns);
+  };
+
+  // Column the dragged card is in right now, highlighted as the drop target.
+  const overStatus = activeTask ? findColumn(board, activeTask.id) : null;
 
   return (
     <DndContext
@@ -130,10 +154,7 @@ export function KanbanBoard({ columns, onOpen, canMove, onMove, onQuickAdd }: Ka
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
-      onDragCancel={() => {
-        setActiveTask(null);
-        setOverStatus(null);
-      }}
+      onDragCancel={handleDragCancel}
     >
       {/* Phones: swipe between columns. Desktop: all four side by side. */}
       <div className="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-4 md:mx-0 md:scroll-px-0 md:px-0 lg:grid lg:grid-cols-4 lg:overflow-visible">
@@ -143,7 +164,7 @@ export function KanbanBoard({ columns, onOpen, canMove, onMove, onQuickAdd }: Ka
             status={status.value}
             label={status.label}
             color={status.color}
-            tasks={columns[status.value]}
+            tasks={board[status.value]}
             isDropTarget={overStatus === status.value}
             onOpen={onOpen}
             canMove={canMove}
@@ -152,7 +173,7 @@ export function KanbanBoard({ columns, onOpen, canMove, onMove, onQuickAdd }: Ka
         ))}
       </div>
 
-      <DragOverlay dropAnimation={{ duration: 180 }}>
+      <DragOverlay dropAnimation={{ duration: 200, easing: 'cubic-bezier(0.2, 0, 0, 1)' }}>
         {activeTask && <TaskCard task={activeTask} isDragging className="cursor-grabbing" />}
       </DragOverlay>
     </DndContext>
@@ -239,6 +260,8 @@ function SortableCard({ task, onOpen, disabled }: { task: Task; onOpen: (task: T
         listeners?.onKeyDown?.(e);
       }}
       aria-label={`${task.title}${disabled ? '' : ', press space to move'}`}
+      // Explain why some cards can't be dragged.
+      title={disabled ? 'Only the assignee, the creator or an admin can move this task' : undefined}
       className={cn(
         'touch-manipulation rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         disabled ? 'cursor-pointer' : 'cursor-grab',

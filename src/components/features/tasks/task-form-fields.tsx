@@ -39,9 +39,9 @@ export function TaskFormFields({ form, members, labels, readOnly = false }: Task
         disableLabelFormatting
       />
       <div className="grid gap-4 sm:grid-cols-2">
-        <CustomField.SelectField form={form} name="status" labelName="Status" options={STATUS_OPTIONS} showSearch={false} viewOnly={readOnly} />
-        <CustomField.SelectField form={form} name="priority" labelName="Priority" options={PRIORITY_OPTIONS} showSearch={false} viewOnly={readOnly} />
-        <CustomField.SelectField form={form} name="assigneeId" labelName="Assignee" options={assigneeOptions} placeholder="Unassigned" viewOnly={readOnly} />
+        <CustomField.SelectField form={form} name="status" labelName="Status" options={STATUS_OPTIONS} showSearch={false} clearable={false} viewOnly={readOnly} />
+        <CustomField.SelectField form={form} name="priority" labelName="Priority" options={PRIORITY_OPTIONS} showSearch={false} clearable={false} viewOnly={readOnly} />
+        <CustomField.SelectField form={form} name="assigneeId" labelName="Assignee" options={assigneeOptions} placeholder="Unassigned" clearable={false} viewOnly={readOnly} />
         <CustomField.DatePickerField form={form} name="dueDate" labelName="Due date" viewOnly={readOnly} disableLabelFormatting />
       </div>
       {labelOptions.length > 0 && (
