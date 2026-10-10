@@ -1,7 +1,7 @@
 'use client';
 
 import type { LucideIcon } from 'lucide-react';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/custom/dialog';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
 
 /** One entry in the palette. */
@@ -37,7 +37,7 @@ export function CommandPalette({ open, onOpenChange, groups }: CommandPalettePro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="top-[20%] translate-y-0 overflow-hidden p-0 sm:max-w-lg [&>button]:hidden">
+      <DialogContent className="gap-0 p-0 pt-3 sm:top-[20%] sm:translate-y-0 sm:overflow-hidden sm:p-0 sm:max-w-lg [&>button]:hidden">
         <DialogTitle className="sr-only">Command palette</DialogTitle>
         <DialogDescription className="sr-only">Search pages, projects and actions</DialogDescription>
         <Command>

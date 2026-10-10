@@ -3,7 +3,7 @@
 import {
   Dialog, DialogClose, DialogContent, DialogDescription,
   DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@/components/ui/custom/dialog';
 import { cn } from '@/lib/utils';
 import { X } from 'lucide-react';
 import type { ReactNode } from 'react';
