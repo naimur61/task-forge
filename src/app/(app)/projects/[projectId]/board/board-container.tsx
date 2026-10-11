@@ -8,17 +8,8 @@ import { KanbanBoard, type BoardColumns } from '@/components/features/tasks/kanb
 import { useAuth } from '@/hooks/use-auth';
 import { useUrlState } from '@/hooks/ui/use-url-state';
 import { canEditTask } from '@/lib/permissions';
-import { fixtureTask } from '@/mocks/fixtures/tasks';
 import type { Task } from '@/types/task';
 import { taskKeys, useBoard, useMoveTask, useProject } from '../service';
-
-/** Sample board for the boneyard skeleton capture. */
-const BOARD_FIXTURE: BoardColumns = {
-  TODO: [0, 1, 2].map((i) => fixtureTask(i, 'TODO')),
-  IN_PROGRESS: [3, 4].map((i) => fixtureTask(i, 'IN_PROGRESS')),
-  IN_REVIEW: [5, 6].map((i) => fixtureTask(i, 'IN_REVIEW')),
-  DONE: [7].map((i) => fixtureTask(i, 'DONE')),
-};
 
 const EMPTY_BOARD: BoardColumns = { TODO: [], IN_PROGRESS: [], IN_REVIEW: [], DONE: [] };
 
@@ -44,11 +35,7 @@ export default function BoardContainer() {
   return (
     <div className="space-y-4">
       <SearchInput value={search} onSearch={(value) => url.set({ search: value })} placeholder="Search this board…" className="sm:w-72" />
-      <Skeleton
-        name="kanban-board"
-        loading={boardQuery.isPending}
-        fixture={<KanbanBoard columns={BOARD_FIXTURE} onOpen={() => undefined} canMove={() => false} onMove={() => undefined} />}
-      >
+      <Skeleton name="kanban-board" loading={boardQuery.isPending}>
         <KanbanBoard
           columns={boardQuery.data?.data ?? EMPTY_BOARD}
           onOpen={(task) => url.set({ task: task.id })}

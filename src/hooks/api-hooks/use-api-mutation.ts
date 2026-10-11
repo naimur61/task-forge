@@ -2,7 +2,8 @@
 
 import { useMutation, useQueryClient, type QueryKey } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { api } from '@/api/fetch/client';
+import { authFetch } from '@/auth/jwt/client';
+import { buildUrl, request } from '@/lib/http/request';
 import { getErrorMessage, type ApiError } from '@/lib/http/api-error';
 
 type MutationMethod = 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -39,15 +40,17 @@ export function useApiMutation<TData = unknown, TVars = void, TContext = unknown
   onError,
 }: UseApiMutationOptions<TData, TVars, TContext>) {
   const queryClient = useQueryClient();
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? '';
 
   return useMutation<TData, ApiError, TVars, TContext>({
     mutationFn: (vars) => {
       const url = typeof path === 'function' ? path(vars) : path;
-      const body = toBody ? toBody(vars) : vars;
-      if (method === 'DELETE') return api.delete<TData>(url);
-      if (method === 'POST') return api.post<TData>(url, body);
-      if (method === 'PUT') return api.put<TData>(url, body);
-      return api.patch<TData>(url, body);
+      // DELETE sends no body, every other verb sends `toBody(vars) ?? vars`.
+      return request<TData>(buildUrl(baseUrl, url), {
+        method,
+        body: method === 'DELETE' ? undefined : toBody ? toBody(vars) : vars,
+        fetcher: authFetch,
+      });
     },
     onMutate,
     onSuccess: (data, vars) => {

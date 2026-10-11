@@ -12,7 +12,6 @@ import { ProjectTabs } from '@/components/features/projects/project-tabs';
 import { useUrlState } from '@/hooks/ui/use-url-state';
 import { isApiError } from '@/lib/http/api-error';
 import { can } from '@/lib/permissions';
-import { PROJECTS_FIXTURE } from '@/mocks/fixtures/projects';
 import { useProject } from './service';
 import TaskPanelsContainer from './task-panels-container';
 
@@ -50,7 +49,7 @@ export default function ProjectShellContainer({ projectId, children }: ProjectSh
 
   return (
     <div className="space-y-5">
-      <Skeleton name="project-header" loading={projectQuery.isPending} fixture={<ProjectHeader project={PROJECTS_FIXTURE[0]} />}>
+      <Skeleton name="project-header" loading={projectQuery.isPending}>
         {project && <ProjectHeader project={project} actions={newTaskButton} />}
       </Skeleton>
 

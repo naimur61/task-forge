@@ -2,7 +2,27 @@ import { describe, expect, it } from 'vitest';
 import { changePasswordSchema } from '@/components/common/forms/schemas/account';
 import { projectSchema } from '@/components/common/forms/schemas/project';
 import { emptyTaskForm, formToTaskInput, taskSchema, taskToForm } from '@/components/common/forms/schemas/task';
-import { fixtureTask } from '@/mocks/fixtures/tasks';
+import type { Task } from '@/types/task';
+import type { UserSummary } from '@/types/common';
+
+/** Minimal Task for form round-trip tests. */
+const sampleTask: Task = {
+  id: 'tsk_sample',
+  projectId: 'prj_sample',
+  title: 'Ship the report',
+  description: 'End of day.',
+  status: 'TODO',
+  priority: 'HIGH',
+  position: 1000,
+  dueDate: '2026-11-15T17:00:00.000Z',
+  assignee: { id: 'usr_sample', name: 'Ava Chen', email: 'ava@demo.dev', avatarUrl: null } satisfies UserSummary,
+  creator: { id: 'usr_owner', name: 'Ava Chen', email: 'ava@demo.dev', avatarUrl: null } satisfies UserSummary,
+  labels: [{ id: 'lbl_feature', projectId: 'prj_sample', name: 'Feature', color: '#6366f1' }],
+  commentCount: 0,
+  completedAt: null,
+  createdAt: '2026-10-01T09:00:00.000Z',
+  updatedAt: '2026-10-02T09:00:00.000Z',
+};
 
 describe('taskSchema', () => {
   it('accepts a minimal task', () => {
@@ -26,12 +46,11 @@ describe('task form converters', () => {
   });
 
   it('round-trips a task through the form', () => {
-    const task = fixtureTask(1);
-    const form = taskToForm(task);
-    expect(form.title).toBe(task.title);
-    expect(form.assigneeId).toBe(task.assignee?.id);
+    const form = taskToForm(sampleTask);
+    expect(form.title).toBe(sampleTask.title);
+    expect(form.assigneeId).toBe(sampleTask.assignee?.id);
     expect(form.dueDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    expect(formToTaskInput(form).labelIds).toEqual(task.labels.map((l) => l.id));
+    expect(formToTaskInput(form).labelIds).toEqual(sampleTask.labels.map((l) => l.id));
   });
 });
 

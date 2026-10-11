@@ -16,7 +16,6 @@ import { ProjectGrid, ProjectRows } from '@/components/features/projects/project
 import { ProjectToolbar, type ProjectView } from '@/components/features/projects/project-toolbar';
 import { useUrlState } from '@/hooks/ui/use-url-state';
 import { applyServerErrors } from '@/lib/http/form-errors';
-import { PROJECTS_FIXTURE } from '@/mocks/fixtures/projects';
 import type { ProjectStatus } from '@/types/project';
 import { useCreateProject, useProjects } from './service';
 
@@ -82,7 +81,7 @@ export default function ProjectsContainer() {
       {projectsQuery.isError && <ErrorState error={projectsQuery.error} onRetry={() => projectsQuery.refetch()} />}
 
       {!projectsQuery.isError && (
-        <Skeleton name="projects-grid" loading={projectsQuery.isPending} fixture={<ProjectGrid projects={PROJECTS_FIXTURE} />}>
+        <Skeleton name="projects-grid" loading={projectsQuery.isPending}>
           {projects.length === 0 && hasFilters && (
             <EmptyState
               icon={SearchX}

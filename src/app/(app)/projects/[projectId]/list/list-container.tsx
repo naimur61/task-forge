@@ -15,7 +15,6 @@ import { useAuth } from '@/hooks/use-auth';
 import { useUrlState } from '@/hooks/ui/use-url-state';
 import { getErrorMessage } from '@/lib/http/api-error';
 import { canEditTask } from '@/lib/permissions';
-import { TASKS_FIXTURE } from '@/mocks/fixtures/tasks';
 import type { Task, TaskFilters as Filters, TaskPriority, TaskSortBy, TaskStatus } from '@/types/task';
 import { useMembers, useProject, useTaskList, useUpdateTask } from '../service';
 
@@ -69,11 +68,7 @@ export default function ListContainer() {
       {tasksQuery.isError ? (
         <ErrorState error={tasksQuery.error} onRetry={() => tasksQuery.refetch()} />
       ) : (
-        <Skeleton
-          name="task-list"
-          loading={tasksQuery.isPending}
-          fixture={<TaskTable tasks={TASKS_FIXTURE} onOpen={() => undefined} canEdit={() => true} onStatusChange={() => undefined} />}
-        >
+        <Skeleton name="task-list" loading={tasksQuery.isPending}>
           {tasks.length === 0 && hasFilters && (
             <EmptyState
               icon={SearchX}

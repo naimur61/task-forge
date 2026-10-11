@@ -47,7 +47,7 @@ function Shell({ children }: { children: ReactNode }) {
           <PaletteTrigger onOpen={() => setCommandOpen(true)} />
           <NotificationBell
             notifications={notifications.data?.data ?? []}
-            unread={notifications.data?.meta.unread ?? 0}
+            unread={(notifications.data?.data ?? []).filter((n) => !n.readAt).length}
             isLoading={notifications.isPending}
             onOpen={openNotification}
             onMarkAllRead={() => markAllRead.mutate()}

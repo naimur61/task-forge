@@ -1,13 +1,9 @@
 import { useApiMutation, useFetchData } from '@/hooks/api-hooks';
 import type { Notification } from '@/types/notification';
-import type { PageMeta, Paginated } from '@/types/common';
+import type { Paginated } from '@/types/common';
 import type { Project } from '@/types/project';
 
-/** Notification list response. `meta.unread` is the unread count for the bell badge. */
-export interface NotificationPage {
-  data: Notification[];
-  meta: PageMeta & { unread: number };
-}
+type NotificationPage = Paginated<Notification>;
 
 /** Cache keys for notifications. */
 export const notificationKeys = {

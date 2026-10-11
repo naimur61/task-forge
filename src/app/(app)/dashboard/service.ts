@@ -16,5 +16,5 @@ export const useMyTasks = (overdue = false) =>
   useFetchData<Paginated<MyTask>>({
     path: 'dashboard/my-tasks',
     queryKey: dashboardKeys.myTasks(overdue),
-    filterData: { overdue: overdue || undefined, limit: 6 },
+    filterData: { page: 1, overdue: overdue || undefined, limit: 6 },
   });

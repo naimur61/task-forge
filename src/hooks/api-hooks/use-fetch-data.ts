@@ -1,11 +1,11 @@
 'use client';
 
 import { keepPreviousData as keepPrevious, useQuery, type QueryKey } from '@tanstack/react-query';
-import { api } from '@/api/fetch/client';
-import type { QueryParams } from '@/lib/http/request';
+import { authFetch } from '@/auth/jwt/client';
+import { buildUrl, request, type QueryParams } from '@/lib/http/request';
 
 interface UseFetchDataOptions {
-  /** API path, e.g. `projects/${id}/tasks`. */
+  /** API path, e.g. `projects/${id}/tasks`. Resolved against NEXT_PUBLIC_API_URL. */
   path: string;
   /** Cache key. Put every value the request depends on in here. */
   queryKey: QueryKey;
@@ -27,7 +27,13 @@ export function useFetchData<T>({
 }: UseFetchDataOptions) {
   return useQuery<T>({
     queryKey,
-    queryFn: ({ signal }) => api.get<T>(path, { params: filterData, signal }),
+    queryFn: ({ signal }) =>
+      request<T>(buildUrl(process.env.NEXT_PUBLIC_API_URL ?? '', path), {
+        method: 'GET',
+        params: filterData,
+        signal,
+        fetcher: authFetch,
+      }),
     enabled,
     placeholderData: keepPreviousData ? keepPrevious : undefined,
   });

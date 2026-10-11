@@ -12,7 +12,6 @@ import { MemberList, type MemberAction } from '@/components/features/members/mem
 import { useAuth } from '@/hooks/use-auth';
 import { useDebounce } from '@/hooks/ui/use-debounce';
 import { can } from '@/lib/permissions';
-import { MEMBERS_FIXTURE } from '@/mocks/fixtures/members';
 import type { UserSummary } from '@/types/common';
 import type { AddMemberInput, Member } from '@/types/member';
 import {
@@ -110,11 +109,7 @@ export default function MembersContainer() {
         )}
       </div>
 
-      <Skeleton
-        name="members-list"
-        loading={membersQuery.isPending}
-        fixture={<MemberList members={MEMBERS_FIXTURE} currentUserId="" myRole="MEMBER" onAction={() => undefined} />}
-      >
+      <Skeleton name="members-list" loading={membersQuery.isPending}>
         <MemberList members={members} currentUserId={userId} myRole={myRole} onAction={handleAction} />
       </Skeleton>
 

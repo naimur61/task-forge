@@ -10,7 +10,6 @@ import { PageHeader } from '@/components/common/page-header/page-header';
 import { Pagination } from '@/components/common/pagination/pagination';
 import { NotificationList } from '@/components/features/notifications/notification-list';
 import { useUrlState } from '@/hooks/ui/use-url-state';
-import { NOTIFICATIONS_FIXTURE } from '@/mocks/fixtures/notifications';
 import type { Notification } from '@/types/notification';
 import { useMarkAllNotificationsRead, useMarkNotificationRead, useNotifications } from '../service';
 
@@ -22,6 +21,7 @@ export default function NotificationsContainer() {
   const notificationsQuery = useNotifications(page, 15);
   const notifications = notificationsQuery.data?.data ?? [];
   const meta = notificationsQuery.data?.meta;
+  const unread = notifications.filter((n) => !n.readAt).length;
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
 
@@ -34,9 +34,9 @@ export default function NotificationsContainer() {
     <div className="space-y-6">
       <PageHeader
         title="Notifications"
-        description={meta?.unread ? `${meta.unread} unread` : 'Updates about your tasks and projects.'}
+        description={unread ? `${unread} unread` : 'Updates about your tasks and projects.'}
         actions={
-          !!meta?.unread && (
+          !!unread && (
             <ActionButton variant="outline" icon={<CheckCheck />} isPending={markAllRead.isPending} handleOpen={() => markAllRead.mutate()}>
               Mark all as read
             </ActionButton>
@@ -47,11 +47,7 @@ export default function NotificationsContainer() {
       {notificationsQuery.isError ? (
         <ErrorState error={notificationsQuery.error} onRetry={() => notificationsQuery.refetch()} />
       ) : (
-        <Skeleton
-          name="notification-list"
-          loading={notificationsQuery.isPending}
-          fixture={<NotificationList notifications={NOTIFICATIONS_FIXTURE} onOpen={() => undefined} />}
-        >
+        <Skeleton name="notification-list" loading={notificationsQuery.isPending}>
           {notifications.length === 0 ? (
             <EmptyState icon={BellOff} title="You're all caught up" description="New assignments and comments will show up here." />
           ) : (
