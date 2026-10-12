@@ -55,9 +55,9 @@ export function AvatarStack({ users, total = users.length, max = 4 }: AvatarStac
   const shown = users.slice(0, max);
   const extra = total - shown.length;
   return (
-    <div className="flex -space-x-2">
+    <div className="flex -space-x-1.5">
       {shown.map((user) => (
-        <UserAvatar key={user.id} user={user} size="sm" className="ring-2 ring-background" />
+        <UserAvatar key={user.id} user={user} size="sm" className="bg-background ring-2 ring-background" />
       ))}
       {extra > 0 && (
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-muted text-[11px] font-semibold text-muted-foreground ring-2 ring-background">

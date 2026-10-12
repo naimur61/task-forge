@@ -14,6 +14,7 @@ import { MyTasksList } from '@/components/features/dashboard/my-tasks-list';
 import { StatCards } from '@/components/features/dashboard/stat-cards';
 import { StatusBreakdown } from '@/components/features/dashboard/status-breakdown';
 import { useAuth } from '@/hooks/use-auth';
+import { EMPTY_SUMMARY } from './empty-summary';
 import { useDashboardSummary, useMyTasks } from './service';
 
 // Charts pull in Recharts (~100 kB), so they load after the rest of the page.
@@ -29,8 +30,8 @@ export default function DashboardContainer() {
   const { user } = useAuth();
   const summaryQuery = useDashboardSummary();
   const myTasksQuery = useMyTasks();
-  const summary = summaryQuery.data?.data;
-  const isNewUser = summaryQuery.isSuccess && (summary?.projects.total ?? 0) === 0;
+  const summary = summaryQuery.data?.data ?? EMPTY_SUMMARY;
+  const isNewUser = summaryQuery.isSuccess && summary.projects.total === 0;
 
   const newProjectButton = (
     <ActionButton icon={<FolderPlus />} handleOpen={() => router.push('/projects?new=1')}>
@@ -56,7 +57,7 @@ export default function DashboardContainer() {
         />
       )}
 
-      {!summaryQuery.isError && !isNewUser && summary && (
+      {!summaryQuery.isError && !isNewUser && (
         <>
           <Skeleton name="dashboard-stats" loading={summaryQuery.isPending}>
             <StatCards summary={summary} />
