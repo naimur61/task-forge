@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { UserPlus } from 'lucide-react';
@@ -14,12 +14,17 @@ import { RegisterForm } from '@/components/features/auth/register-form';
 
 export default function RegisterContainer() {
   const router = useRouter();
-  const { register } = useAuth();
+  const { register, status } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
   const form = useZodForm(registerSchema, {
     defaultValues: { name: '', email: '', password: '', confirmPassword: '' },
   });
+
+  // Already signed in (e.g. opened /register in a new tab) → go to the app.
+  useEffect(() => {
+    if (status === 'authenticated') router.replace(AFTER_LOGIN_PATH);
+  }, [status, router]);
 
   const onSubmit = form.handleSubmit(async ({ name, email, password }) => {
     setError(null);
