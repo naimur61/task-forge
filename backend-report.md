@@ -68,8 +68,7 @@ Severity: **High** blocks normal use, **Medium** breaks a flow sometimes, **Low*
 - Fix: send `Access-Control-Allow-Origin: <the request origin>` (not `*`) for the allowed origins, with
   `Access-Control-Allow-Credentials: true`, on both the preflight and the real response. Put the allowed origins in an env variable and
   include `http://localhost:4000` (and the production frontend URL).
-- Until this is fixed, set `NEXT_PUBLIC_API_URL=/api/v1` and `BACKEND_URL=https://task-forge-server-theta.vercel.app` in `.env.local`;
-  the Next proxy then talks to the backend from the server and CORS does not apply.
+- The frontend has no proxy any more: `NEXT_PUBLIC_API_URL` (the backend URL) is the only API setting, so this must be fixed on the backend.
 
 ### B6. Refresh cookie is cross-site unfriendly — Low (for production)
 
@@ -78,7 +77,7 @@ Severity: **High** blocks normal use, **Medium** breaks a flow sometimes, **Low*
   so `/auth/refresh` returned `401 REFRESH_INVALID` when called from `localhost` without the cookie. Because the frontend logs the
   user out when a refresh fails, the user would be logged out when the 15 minute access token ends (inferred, not waited out).
 - With direct calls from `localhost:4000` the cookie is cross-site, so `SameSite=None; Secure` is **required** (a `Lax` cookie is not sent
-  on the refresh call and every reload logs the user out). The proxy hides this. For production either serve the frontend and API on the same
+  on the refresh call and every reload logs the user out). For production either serve the frontend and API on the same
   site (for example `app.example.com` and `api.example.com` with `Domain=.example.com`), or use `SameSite=None; Secure`.
 
 ### B7. Notification `link` does not say which task — Low
@@ -144,7 +143,7 @@ and the My tasks card all worked. The dashboard summary part could not load beca
 
 ## Frontend fixes done while testing
 
-- API calls now go through a Next.js rewrite (`/api/v1` → `BACKEND_URL`): no CORS, refresh cookie is first-party.
+- API calls go straight to `NEXT_PUBLIC_API_URL` (the only API setting; a temporary Next proxy was removed again).
 - `.env.local` had `NEXT_PUBLIC_API_URL` without `/api/v1`, so every call returned 404. Now `/api/v1`.
 - `/auth/refresh` is retried 2 times on `5xx` or network errors. Before, one `500` logged the user out.
 - After a failed refresh the app no longer sends a pointless `/auth/me` and a second refresh.
