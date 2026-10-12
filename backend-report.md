@@ -4,7 +4,7 @@ Issues found while testing the TaskForge frontend against the deployed backend
 (`https://task-forge-server-theta.vercel.app/api/v1`). Frontend problems were fixed in
 the frontend; everything below needs a backend fix.
 
-Last updated: 2026-10-12.
+Last updated: 2026-10-12 (09:58 UTC).
 
 ## Quick login (demo accounts)
 
@@ -35,7 +35,7 @@ Severity: **High** blocks normal use, **Medium** breaks a flow sometimes, **Low*
 - Effect in the app: login fails with "Internal server error.", and a page reload logs the user out
   (the refresh call fails, so the session cannot be restored).
 
-### B2. Random 500 / 503 even when `/health` says operational — High
+### B2. Random 500s even when `/health` says operational — High
 
 - Right after a healthy `/health`, three parallel data calls with a valid token gave `200 / 500 / 200`, then `200 / 500 / 500`, then `200 / 200 / 500`.
   Repeating `GET /dashboard/summary`, `/dashboard/my-tasks`, `/notifications`, `/projects` one by one also gave 500.
@@ -53,7 +53,7 @@ Severity: **High** blocks normal use, **Medium** breaks a flow sometimes, **Low*
 
 ### B4. Login rate limit is very strict and slow to answer — Medium
 
-- 8 failed logins within about 10 seconds were followed by `429` for the next attempts.
+- 8 logins within about 10 seconds (all of which returned `500`, see B1) were followed by `429` for the next attempts.
   The first `429` took 5.4 s to answer, the following ones about 0.5 s.
 - With the `500`s from B1 each retry counts toward the limit, so a tester gets locked out quickly.
 - Please check the limit (for example 5 per minute per IP) and that **successful** logins do not count. Consider returning
@@ -71,7 +71,8 @@ Severity: **High** blocks normal use, **Medium** breaks a flow sometimes, **Low*
 
 - Cookie: `tf_refresh; HttpOnly; Secure; SameSite=Lax; Path=/api/v1/auth`.
 - With the frontend on one site and the API on `vercel.app`, the browser does not send a `SameSite=Lax` cookie on `fetch`,
-  so `/auth/refresh` returned `401 REFRESH_INVALID` and the user was logged out after the 15 minute access token ended.
+  so `/auth/refresh` returned `401 REFRESH_INVALID` when called from `localhost` without the cookie. Because the frontend logs the
+  user out when a refresh fails, the user would be logged out when the 15 minute access token ends (inferred, not waited out).
 - Fixed for now with the proxy (cookie becomes first-party). For production either serve the frontend and API on the same
   site (for example `app.example.com` and `api.example.com` with `Domain=.example.com`), or use `SameSite=None; Secure`.
 
@@ -81,6 +82,36 @@ Severity: **High** blocks normal use, **Medium** breaks a flow sometimes, **Low*
   Clicking "Marcus assigned you Pricing page copy review" opens the project, not that task.
 - The frontend already opens a task from `?task=<taskId>`, so if the backend returns
   `/projects/prj_web/board?task=tsk_0035` for task notifications, the click will open the task drawer directly.
+
+### B8. `GET /dashboard/summary` returns 500 for every user, probably after a project was deleted — High
+
+- At 09:50 UTC `/dashboard/summary` returned `200` and matched the shape the frontend expects.
+  Between 09:51 and 09:52 UTC a test script on the real backend created a temporary project ("QA tmp project", then "QA tmp move"),
+  added tasks, a comment and a label to it, archived/restored it, moved tasks, then **deleted the project**.
+- Since then `/dashboard/summary` returns `500 INTERNAL` on **every** call for `owner@`, `admin@` and `member@demo.dev`
+  (12 of 12 in a row for the owner, checked about 4 seconds apart). Every other endpoint returns `200` every time.
+  `/health` says `operational`, so this is not the database being down.
+- Not proven, but the timing points to data left behind by the project delete (for example activity or notification rows
+  that still point to the deleted project, which the summary's `recentActivity` / `projectName` lookup cannot handle).
+- Please check the function logs for the exception, make project delete remove or cascade its activity, notifications and tasks,
+  and make the summary skip rows whose project is missing. The demo data may need a reseed.
+- Effect in the app: the dashboard cards, charts and recent activity stay on the loading skeleton, then show
+  "Could not load this" with a Try again button.
+- Repro: login as any demo user, `POST /projects`, `POST /projects/:id/tasks`, `DELETE /projects/:id`, then `GET /dashboard/summary`.
+
+## Real backend checks (contract and writes)
+
+With the backend healthy (09:50 UTC) every read endpoint the frontend calls returned `200` with the same fields the frontend types
+expect (checked: `/auth/me`, `/projects`, `/dashboard/summary`, `/dashboard/my-tasks`, `/notifications`, `/users/search`,
+`/projects/:id`, `/board`, `/tasks`, `/members`, `/labels`, `/activity`). Only harmless differences: activity items have no `actorId`,
+notifications have an extra `userId`.
+
+Writes also worked on the real backend: create project, create / get / edit / delete task, create / list comments,
+move task (`{status, afterId}`), create label, archive, restore, rename project, mark all notifications read, delete project.
+Note `PATCH .../move` rejects a `position` field (`property position should not exist`); the frontend sends `afterId`, which is correct.
+
+In the browser against the real backend: login, session restore after a full reload (`/auth/refresh` 200 then `/auth/me` 200),
+and the My tasks card all worked. The dashboard summary part could not load because of B8.
 
 ## Frontend fixes done while testing
 
@@ -118,5 +149,5 @@ No horizontal overflow was found at 375 or 768 px on any page.
 
 - Right after closing a dialog or drawer, the next click sometimes did nothing. It did not reproduce reliably and looks
   like an artifact of the background test browser (animations and timers are throttled there), so no code was changed.
-- Reload keeping the user signed in was seen working once against the real backend (`/auth/refresh` returned 200).
-  Re-check it when B1 and B2 are fixed.
+- The Settings, Members, Board and List pages were only clicked through on the mock API (same shapes as the real one, see above),
+  not on the real backend, because the real backend was down for most of the session.
