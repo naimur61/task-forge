@@ -30,23 +30,34 @@ const isNoRefreshUrl = (url: string) => {
   return NO_REFRESH.some((endpoint) => path.endsWith(endpoint));
 };
 
+/** Extra tries when the server is briefly unavailable (5xx or network error). */
+const REFRESH_RETRIES = 2;
+const REFRESH_RETRY_DELAY_MS = 800;
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 async function performRefresh(): Promise<boolean> {
   const refreshToken = getRefreshToken();
   if (!USES_COOKIES && !refreshToken) return false;
-  try {
-    const res = await fetch(buildUrl(AUTH_API_URL, AUTH_ENDPOINTS.refresh), {
-      method: 'POST',
-      headers: { Accept: 'application/json', ...(refreshToken ? { 'Content-Type': 'application/json' } : {}) },
-      body: refreshToken ? JSON.stringify({ refreshToken }) : undefined,
-      credentials: USES_COOKIES ? 'include' : 'same-origin',
-    });
-    if (!res.ok) return false;
-    const data = (await res.json().catch(() => ({}))) as RefreshResponse;
-    setTokens(data);
-    return true;
-  } catch {
-    return false;
+  for (let attempt = 0; attempt <= REFRESH_RETRIES; attempt++) {
+    try {
+      const res = await fetch(buildUrl(AUTH_API_URL, AUTH_ENDPOINTS.refresh), {
+        method: 'POST',
+        headers: { Accept: 'application/json', ...(refreshToken ? { 'Content-Type': 'application/json' } : {}) },
+        body: refreshToken ? JSON.stringify({ refreshToken }) : undefined,
+        credentials: USES_COOKIES ? 'include' : 'same-origin',
+      });
+      if (res.ok) {
+        const data = (await res.json().catch(() => ({}))) as RefreshResponse;
+        setTokens(data);
+        return true;
+      }
+      if (res.status < 500) return false; // 4xx: the session is really invalid
+    } catch {
+      // Network error: treat like a temporary server problem and retry.
+    }
+    if (attempt < REFRESH_RETRIES) await wait(REFRESH_RETRY_DELAY_MS);
   }
+  return false;
 }
 
 let inFlight: Promise<boolean> | null = null;
