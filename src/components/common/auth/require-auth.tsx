@@ -21,15 +21,15 @@ interface RequireAuthProps {
  * }
  */
 export function RequireAuth({ children, fallback = null }: RequireAuthProps) {
-  const { status } = useAuth();
+  const { status, signedOutByUser } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.replace(`${LOGIN_PATH}?next=${encodeURIComponent(pathname)}`);
-    }
-  }, [status, router, pathname]);
+    if (status !== 'unauthenticated') return;
+    // After an explicit sign-out go to plain /login; otherwise come back to this page after signing in.
+    router.replace(signedOutByUser ? LOGIN_PATH : `${LOGIN_PATH}?next=${encodeURIComponent(pathname)}`);
+  }, [status, signedOutByUser, router, pathname]);
 
   return status === 'authenticated' ? <>{children}</> : <>{fallback}</>;
 }

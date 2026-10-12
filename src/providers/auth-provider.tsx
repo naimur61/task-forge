@@ -11,6 +11,8 @@ interface AuthContextValue {
   user: User | null;
   status: AuthStatus;
   isAuthenticated: boolean;
+  /** True after the user chose to sign out (so the login page does not need a `next` link back). */
+  signedOutByUser: boolean;
   /** Sign in; resolves with the user, rejects with ApiError (e.g. 401 wrong credentials). */
   login: (credentials: LoginRequest) => Promise<User>;
   /** Create an account and sign in. */
@@ -26,6 +28,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<AuthStatus>('loading');
+  const [signedOutByUser, setSignedOutByUser] = useState(false);
 
   const signedOut = useCallback(() => {
     setUser(null);
@@ -36,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setTokens({ accessToken: res.accessToken, refreshToken: res.refreshToken });
     setUser(res.user);
     setStatus('authenticated');
+    setSignedOutByUser(false);
     return res.user;
   }, []);
 
@@ -77,14 +81,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       // The local session is cleared regardless of what the server says.
     } finally {
+      setSignedOutByUser(true);
       clearTokens();
       signedOut();
     }
   }, [signedOut]);
 
   const value = useMemo<AuthContextValue>(
-    () => ({ user, status, isAuthenticated: status === 'authenticated', login, register, logout, refreshUser }),
-    [user, status, login, register, logout, refreshUser],
+    () => ({ user, status, isAuthenticated: status === 'authenticated', signedOutByUser, login, register, logout, refreshUser }),
+    [user, status, signedOutByUser, login, register, logout, refreshUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
