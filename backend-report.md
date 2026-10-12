@@ -101,7 +101,7 @@ Severity: **High** blocks normal use, **Medium** breaks a flow sometimes, **Low*
 
 ### B9. `/health` says `operational` while the data endpoints return 500 — Medium
 
-- Seen at 11:32 to 11:44 UTC (frontend host clock 16:32 to 16:44): `GET /health` returned `operational` and login worked, but
+- Seen at 10:32 to 10:44 UTC (16:32 to 16:44 on the test machine clock, which is UTC+6): `GET /health` returned `operational` and login worked, but
   `/dashboard/summary`, `/dashboard/my-tasks`, `/projects` and `/projects/:id/board` all returned `500` on every call
   (30+ calls in a row). The health check does not cover the data path (database queries), so it cannot be used to know if the API works.
 - Please make `/health` run a small real query (for example `SELECT 1` plus one read on a main table) and return `503` if it fails.
