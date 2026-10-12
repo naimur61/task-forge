@@ -54,7 +54,7 @@ Demo data lives in memory, so restarting the dev server resets it.
 Set one variable in `.env.local`:
 
 ```bash
-NEXT_PUBLIC_API_URL=https://task-forge-server-theta.vercel.app/api/v1   # or /api/v1 to use the built-in proxy (BACKEND_URL)
+NEXT_PUBLIC_API_URL=https://task-forge-server-theta.vercel.app/api/v1
 ```
 
 Nothing else changes. The demo API (`src/mocks/`) is the contract the backend should follow:
