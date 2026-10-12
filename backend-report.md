@@ -59,12 +59,13 @@ Severity: **High** blocks normal use, **Medium** breaks a flow sometimes, **Low*
 - Please check the limit (for example 5 per minute per IP) and that **successful** logins do not count. Consider returning
   `Retry-After` so the UI can show a wait time.
 
-### B5. CORS only allows `http://localhost:3000` — Low
+### B5. CORS must allow the frontend on `http://localhost:4000` — Medium
 
-- `OPTIONS /auth/login` with `Origin: http://localhost:4000`, `:3100` or `:5173` returns no `access-control-allow-origin`,
-  so the browser blocks the call (the extension shows it as a 503).
-- The frontend now calls the API through a Next.js proxy (`/api/v1` → backend), so this no longer blocks us.
-  Still, make the allowed origins a config list (env variable) instead of one fixed value.
+- The frontend is fixed on port 4000, but the backend only sends `access-control-allow-origin` for `http://localhost:3000`.
+  `OPTIONS /auth/login` with `Origin: http://localhost:4000` returns no allow-origin header, so the browser blocks the call
+  (the test browser shows it as a 503).
+- Add `http://localhost:4000` to the allowed origins (keep `credentials: true`), and make the list an env variable.
+- The frontend currently avoids this by calling the API through its own `/api/v1` proxy, but that only works through the Next server.
 
 ### B6. Refresh cookie is cross-site unfriendly — Low (for production)
 
