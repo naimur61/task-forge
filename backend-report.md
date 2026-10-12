@@ -4,7 +4,7 @@ Issues found while testing the TaskForge frontend against the deployed backend
 (`https://task-forge-server-theta.vercel.app/api/v1`). Frontend problems were fixed in
 the frontend; everything below needs a backend fix.
 
-Last updated: 2026-10-12 (09:58 UTC).
+Last updated: 2026-10-12 (10:50 UTC, after the second pass).
 
 ## Quick login (demo accounts)
 
@@ -98,6 +98,30 @@ Severity: **High** blocks normal use, **Medium** breaks a flow sometimes, **Low*
 - Effect in the app: the dashboard cards, charts and recent activity stay on the loading skeleton, then show
   "Could not load this" with a Try again button.
 - Repro: login as any demo user, `POST /projects`, `POST /projects/:id/tasks`, `DELETE /projects/:id`, then `GET /dashboard/summary`.
+
+### B9. `/health` says `operational` while the data endpoints return 500 — Medium
+
+- Seen at 11:32 to 11:44 UTC (frontend host clock 16:32 to 16:44): `GET /health` returned `operational` and login worked, but
+  `/dashboard/summary`, `/dashboard/my-tasks`, `/projects` and `/projects/:id/board` all returned `500` on every call
+  (30+ calls in a row). The health check does not cover the data path (database queries), so it cannot be used to know if the API works.
+- Please make `/health` run a small real query (for example `SELECT 1` plus one read on a main table) and return `503` if it fails.
+
+## Second pass (after the backend fixes), 2026-10-12
+
+| Item | Result |
+| ---- | ------ |
+| B7 notification links | Fixed. Task notifications now return `/projects/:id/board?task=<taskId>`. |
+| B8 `/dashboard/summary` | Not reliably fixed. It returned `200` 5 times in a row (about 10:30 UTC), then `500` again with the other data endpoints. |
+| B1 backend down | Still happens. `/health` went `down` for about 2.5 minutes, then again around 10:47 UTC. |
+| B2 failures under load | Still happens, and it looks load related. Single sequential calls returned `200` (60 of 60). Four parallel calls returned `500` about 80% of the time, and right after that burst the whole API was down for about 2.5 minutes. Every page load in the browser sends 3 to 4 calls at once and triggered the same failure. Check the database connection limit / pooling for the serverless functions first. |
+| B4 login limit | Still there. The 10th successful login within a minute returned `429`; it cleared after about 15 to 60 seconds. Successful logins count toward the limit. No `Retry-After` header. |
+| B5 CORS for port 4000 | Not fixed. `OPTIONS` with `Origin: http://localhost:4000` still has no `access-control-allow-origin`. |
+| B3, B6 | Not changed (still `500` on refresh when the database is down; cookie still `SameSite=Lax`). |
+
+What worked on the frontend against the real backend in this pass: wrong password shows "Incorrect email or password.", correct login
+redirects to the dashboard, the session is restored after a reload, a failed data call shows "Could not load this" with Try again,
+and register / forgot / reset password have no overflow at 768 px. The full page-by-page pass could not be repeated on the real backend
+because it was failing again within minutes of becoming stable.
 
 ## Real backend checks (contract and writes)
 
