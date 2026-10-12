@@ -4,7 +4,7 @@ Issues found while testing the TaskForge frontend against the deployed backend
 (`https://task-forge-server-theta.vercel.app/api/v1`). Frontend problems were fixed in
 the frontend; everything below needs a backend fix.
 
-Last updated: 2026-10-12 (10:50 UTC, after the second pass).
+Last updated: 2026-10-12 (11:40 UTC, after the third pass).
 
 ## Quick login (demo accounts)
 
@@ -110,6 +110,48 @@ Severity: **High** blocks normal use, **Medium** breaks a flow sometimes, **Low*
   (30+ calls in a row). The health check does not cover the data path (database queries), so it cannot be used to know if the API works.
 - Please make `/health` run a small real query (for example `SELECT 1` plus one read on a main table) and return `503` if it fails.
 
+## Third pass: full UI test in the browser, 2026-10-12 (11:20 to 11:40 UTC)
+
+The frontend (`http://localhost:4000`) now calls `NEXT_PUBLIC_API_URL` directly. `.env.local` pointed at the **local backend**
+(`http://localhost:4040/api/v1`), so the whole UI pass ran against it, and every request in the browser's network tab was checked.
+The deployed backend was re-checked with curl (sequential requests only).
+
+### Local backend (`:4040`): everything worked
+
+| Flow | Result |
+| ---- | ------ |
+| Sign-up | Empty / invalid / weak-password messages OK; valid sign-up `POST /auth/register` 201, lands on an empty dashboard ("Create your first project"); same email again 409, shown as "An account with this email already exists." |
+| Login / logout / reload | Wrong password 401 "Incorrect email or password."; login 200; reload restores the session (`/auth/refresh` 200); sign-out 204 and the cookie is cleared; protected URL while signed out goes to `/login?next=...` |
+| Forgot / reset password | `POST /auth/forgot-password` 204, "Check your email" screen; reset with a bad token 400, shown as "Reset link is invalid or has expired." |
+| Every page (Dashboard, Projects, Board, List, Members, Activity, Settings, Notifications, Account) | All requests 200 / 201 / 204. Real data renders; no overflow at 375 or 768 px |
+| Writes from the UI | create project 201, create task 201, comment 201, delete project (type-name confirm) works; dashboard summary still returns 200 afterwards (so B8 does not happen locally) |
+| Load | 4, 8 and 16 parallel requests, 3 rounds each: 48 of 48 returned 200 (B2 does not happen locally) |
+| CORS from `http://localhost:4000` | `Access-Control-Allow-Origin: http://localhost:4000`, `Allow-Credentials: true`, `Expose-Headers: Retry-After,X-Request-Id` |
+| Cookie | `tf_refresh; HttpOnly; SameSite=Lax` (no `Secure`). Works because `localhost:4000` and `localhost:4040` are the same site |
+| Login limit | 14 logins in a row all 200 (no limit hit locally) |
+
+Only oddities locally: `/health` said `degraded` (latency 1460 ms) once at 11:22 UTC, then `operational`.
+
+### Deployed backend (`task-forge-server-theta.vercel.app`): not updated
+
+| Item | Result at 11:37 UTC |
+| ---- | ------------------- |
+| Health and reads | `operational`; summary, my-tasks, projects, notifications, board all `200` (3 of 3 each, sequential) |
+| B7 notification links | Fixed (`?task=<id>` is returned) |
+| B5 CORS | **Not fixed.** `OPTIONS` and `POST` with `Origin: http://localhost:4000` have no `access-control-allow-origin`, so a browser pointed at this URL will block every call |
+| B6 cookie | Still `Secure; SameSite=Lax`. It must be `SameSite=None; Secure` for a cross-site frontend |
+| B1, B2, B8, B9 | Not seen again in this sample (sequential only; no parallel test on purpose), but they were seen earlier today and do not happen on the local backend. They look specific to the deployed environment (database connection / pooling on the serverless deployment) |
+
+**Main finding: the local backend code already has the CORS and `Retry-After` changes, the deployed one does not. Redeploy the current backend.**
+Then re-test B1, B2, B8 and B9 on the deployed URL under normal page load (3 to 4 parallel calls per page).
+
+### Frontend notes from this pass (not backend problems)
+
+- The first copy of each GET in the network list shows `503`. That is the dev server cancelling a duplicate request (React StrictMode) and is not a server response.
+- Responses with no body (`204`, for example logout, delete, forgot-password) are labelled `503` by the test tool, but curl confirms `204`.
+- The Next.js "issues" badge and the hydration warning come from the "temp mail" browser extension adding attributes to email inputs. Not an app bug.
+- Each page sends a CORS preflight (`OPTIONS`) per URL because of the `Authorization` header; `Access-Control-Max-Age: 600` is already set, so only the first call per URL pays it.
+
 ## Second pass (after the backend fixes), 2026-10-12
 
 | Item | Result |
@@ -150,6 +192,9 @@ and the My tasks card all worked. The dashboard summary part could not load beca
 - Dashboard showed a blank page while the summary was loading (no skeleton). It now shows the skeleton.
 - Stacked avatars (project cards, project header) hid each other's initials. They are now opaque and overlap less.
 - Dev and start scripts run on port 4000.
+- `/favicon.ico` returned 500 in dev because `src/app/favicon.ico` and `public/favicon.ico` both existed. The duplicate was removed.
+- A signed-in user opening `/register` now goes to the dashboard (like `/login`).
+- After an explicit sign-out the app goes to plain `/login` (it used to add `?next=<page you were on>`).
 
 ## How the frontend was tested
 
