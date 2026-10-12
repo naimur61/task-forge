@@ -59,13 +59,17 @@ Severity: **High** blocks normal use, **Medium** breaks a flow sometimes, **Low*
 - Please check the limit (for example 5 per minute per IP) and that **successful** logins do not count. Consider returning
   `Retry-After` so the UI can show a wait time.
 
-### B5. CORS must allow the frontend on `http://localhost:4000` — Medium
+### B5. CORS blocks the browser: no `access-control-allow-origin` for any origin — High
 
-- The frontend is fixed on port 4000, but the backend only sends `access-control-allow-origin` for `http://localhost:3000`.
-  `OPTIONS /auth/login` with `Origin: http://localhost:4000` returns no allow-origin header, so the browser blocks the call
-  (the test browser shows it as a 503).
-- Add `http://localhost:4000` to the allowed origins (keep `credentials: true`), and make the list an env variable.
-- The frontend currently avoids this by calling the API through its own `/api/v1` proxy, but that only works through the Next server.
+- The frontend now calls the backend URL directly from `http://localhost:4000` (fixed port). Checked at 11:04 UTC with the same
+  requests a browser sends: `OPTIONS /auth/login` and `POST /auth/login` with `Origin: http://localhost:4000` return `204` / `200`
+  but **no** `access-control-allow-origin` header (only `access-control-allow-credentials: true`). The same is true for
+  `Origin: http://localhost:3000`, which worked earlier today. The browser will block every direct call with a CORS error.
+- Fix: send `Access-Control-Allow-Origin: <the request origin>` (not `*`) for the allowed origins, with
+  `Access-Control-Allow-Credentials: true`, on both the preflight and the real response. Put the allowed origins in an env variable and
+  include `http://localhost:4000` (and the production frontend URL).
+- Until this is fixed, set `NEXT_PUBLIC_API_URL=/api/v1` and `BACKEND_URL=https://task-forge-server-theta.vercel.app` in `.env.local`;
+  the Next proxy then talks to the backend from the server and CORS does not apply.
 
 ### B6. Refresh cookie is cross-site unfriendly — Low (for production)
 
@@ -73,7 +77,8 @@ Severity: **High** blocks normal use, **Medium** breaks a flow sometimes, **Low*
 - With the frontend on one site and the API on `vercel.app`, the browser does not send a `SameSite=Lax` cookie on `fetch`,
   so `/auth/refresh` returned `401 REFRESH_INVALID` when called from `localhost` without the cookie. Because the frontend logs the
   user out when a refresh fails, the user would be logged out when the 15 minute access token ends (inferred, not waited out).
-- Fixed for now with the proxy (cookie becomes first-party). For production either serve the frontend and API on the same
+- With direct calls from `localhost:4000` the cookie is cross-site, so `SameSite=None; Secure` is **required** (a `Lax` cookie is not sent
+  on the refresh call and every reload logs the user out). The proxy hides this. For production either serve the frontend and API on the same
   site (for example `app.example.com` and `api.example.com` with `Domain=.example.com`), or use `SameSite=None; Secure`.
 
 ### B7. Notification `link` does not say which task — Low
