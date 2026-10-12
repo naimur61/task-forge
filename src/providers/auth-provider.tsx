@@ -41,7 +41,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshUser = useCallback(async () => {
     // The access token only lives in memory: after a reload, trade the refresh cookie for a new one.
-    if (!getAccessToken()) await refreshSession();
+    if (!getAccessToken() && !(await refreshSession())) {
+      signedOut();
+      return null;
+    }
     try {
       const me = await authApi.me();
       setUser(me);
