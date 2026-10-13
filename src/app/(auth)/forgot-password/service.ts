@@ -1,6 +1,5 @@
-import { authApi } from '@/auth/jwt/client';
+import { useApiMutation } from '@/hooks/api-hooks';
 
-/** API calls for the forgot-password page (kept out of the container). */
-export const forgotPasswordService = {
-  requestResetLink: (email: string) => authApi.forgotPassword(email),
-};
+/** Email me a password reset link. */
+export const useForgotPassword = () =>
+  useApiMutation<void, { email: string }>({ method: 'POST', path: 'auth/forgot-password', errorToast: false });

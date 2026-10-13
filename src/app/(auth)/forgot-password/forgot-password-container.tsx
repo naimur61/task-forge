@@ -5,13 +5,14 @@ import Link from 'next/link';
 import { KeyRound, MailCheck } from 'lucide-react';
 import { useZodForm } from '@/components/common/forms/hooks/use-form';
 import { getErrorMessage } from '@/lib/http/api-error';
-import { forgotPasswordSchema } from '@/auth/jwt/validators';
+import { forgotPasswordSchema } from '@/components/common/forms/schemas/auth';
 import { AuthCard } from '@/components/features/auth/auth-card';
 import { AuthMessage } from '@/components/features/auth/auth-message';
 import { ForgotPasswordForm } from '@/components/features/auth/forgot-password-form';
-import { forgotPasswordService } from './service';
+import { useForgotPassword } from './service';
 
 export default function ForgotPasswordContainer() {
+  const forgotPassword = useForgotPassword();
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const form = useZodForm(forgotPasswordSchema, { defaultValues: { email: '' } });
@@ -19,7 +20,7 @@ export default function ForgotPasswordContainer() {
   const onSubmit = form.handleSubmit(async ({ email }) => {
     setError(null);
     try {
-      await forgotPasswordService.requestResetLink(email);
+      await forgotPassword.mutateAsync({ email });
       setSentTo(email);
     } catch (e) {
       setError(getErrorMessage(e));

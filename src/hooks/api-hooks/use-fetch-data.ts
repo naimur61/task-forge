@@ -1,7 +1,7 @@
 'use client';
 
 import { keepPreviousData as keepPrevious, useQuery, type QueryKey } from '@tanstack/react-query';
-import { authFetch } from '@/auth/jwt/client';
+import { authFetch } from '@/lib/http/auth-fetch';
 import { buildUrl, request, type QueryParams } from '@/lib/http/request';
 
 interface UseFetchDataOptions {

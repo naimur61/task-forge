@@ -7,14 +7,16 @@ import { UserPlus } from 'lucide-react';
 import { useZodForm } from '@/components/common/forms/hooks/use-form';
 import { getErrorMessage } from '@/lib/http/api-error';
 import { useAuth } from '@/hooks/use-auth';
-import { AFTER_LOGIN_PATH } from '@/auth/jwt/config';
-import { registerSchema } from '@/auth/jwt/validators';
+import { AFTER_LOGIN_PATH } from '@/config/navigation';
+import { registerSchema } from '@/components/common/forms/schemas/auth';
 import { AuthCard } from '@/components/features/auth/auth-card';
 import { RegisterForm } from '@/components/features/auth/register-form';
+import { useRegister } from './service';
 
 export default function RegisterContainer() {
   const router = useRouter();
-  const { register, status } = useAuth();
+  const { status } = useAuth();
+  const register = useRegister();
   const [error, setError] = useState<string | null>(null);
 
   const form = useZodForm(registerSchema, {
@@ -29,7 +31,7 @@ export default function RegisterContainer() {
   const onSubmit = form.handleSubmit(async ({ name, email, password }) => {
     setError(null);
     try {
-      await register({ name, email, password });
+      await register.mutateAsync({ name, email, password });
       router.replace(AFTER_LOGIN_PATH);
     } catch (e) {
       setError(getErrorMessage(e));

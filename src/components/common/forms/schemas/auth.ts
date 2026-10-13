@@ -6,15 +6,19 @@ const password = z
   .regex(/[A-Za-z]/, 'Include at least one letter')
   .regex(/[0-9]/, 'Include at least one number');
 
+const email = z.email('Enter a valid email address');
+
+/** Sign in form. */
 export const loginSchema = z.object({
-  email: z.email('Enter a valid email address'),
+  email,
   password: z.string().min(1, 'Enter your password'),
 });
 
+/** Sign up form. */
 export const registerSchema = z
   .object({
     name: z.string().trim().min(2, 'Name must be at least 2 characters'),
-    email: z.email('Enter a valid email address'),
+    email,
     password,
     confirmPassword: z.string(),
   })
@@ -23,10 +27,10 @@ export const registerSchema = z
     path: ['confirmPassword'],
   });
 
-export const forgotPasswordSchema = z.object({
-  email: z.email('Enter a valid email address'),
-});
+/** Forgot password form. */
+export const forgotPasswordSchema = z.object({ email });
 
+/** Reset password form. */
 export const resetPasswordSchema = z
   .object({
     password,

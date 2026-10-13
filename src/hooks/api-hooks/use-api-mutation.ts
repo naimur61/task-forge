@@ -2,7 +2,7 @@
 
 import { useMutation, useQueryClient, type QueryKey } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { authFetch } from '@/auth/jwt/client';
+import { authFetch } from '@/lib/http/auth-fetch';
 import { buildUrl, request } from '@/lib/http/request';
 import { getErrorMessage, type ApiError } from '@/lib/http/api-error';
 

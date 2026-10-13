@@ -224,12 +224,11 @@ src/
 │  ├─ layouts/              sidebar, top bar, mobile nav
 │  └─ features/             UI per domain (tasks, projects, members, dashboard, ...)
 ├─ hooks/api-hooks/         useFetchData / useApiMutation (the only way to call the API)
-├─ auth/jwt/                token storage and refresh handling
-├─ providers/               auth, query, theme, toast
+├─ store/zustand/           auth session and small UI state
+├─ providers/               auth bootstrap, query, theme, toast
 ├─ bones/                   generated loading skeletons
 ├─ lib/                     permissions, http helpers, date utils
-├─ types/                   one file per domain (task.ts, project.ts, ...)
-└─ store/zustand/           small UI state (command palette)
+└─ types/                   one file per domain (task.ts, project.ts, ...)
 ```
 
 ## Conventions
@@ -247,7 +246,7 @@ The full API is described in [`openapi.json`](openapi.json) (OpenAPI 3). Import 
 
 - **Resources** return `{ data, meta? }`. Lists include `meta: { page, limit, total, totalPages, hasNext, hasPrev }`.
 - **Errors** return `{ statusCode, error, message, code, details: [{ field, message }] }`. Field details appear next to the matching form inputs.
-- **Auth**: `login` and `register` return `{ user, accessToken }` and set the refresh cookie. `refresh` returns `{ accessToken }`. `me` returns the user. These are not wrapped in `data`. See `src/auth/jwt/config.ts`.
+- **Auth**: `login` and `register` return `{ user, accessToken }` and set the refresh cookie. `refresh` returns `{ accessToken }`. `me` returns the user. These are not wrapped in `data`. Token refresh lives in `src/lib/http/auth-fetch.ts`.
 
 ## Troubleshooting
 

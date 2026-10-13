@@ -1,6 +1,9 @@
-import { authApi } from '@/auth/jwt/client';
+import { useApiMutation } from '@/hooks/api-hooks';
 
-/** API calls for the reset-password page (kept out of the container). */
-export const resetPasswordService = {
-  setNewPassword: (token: string, password: string) => authApi.resetPassword({ token, password }),
-};
+/** Set a new password with the token from the email link. */
+export const useResetPassword = () =>
+  useApiMutation<void, { token: string; password: string }>({
+    method: 'POST',
+    path: 'auth/reset-password',
+    errorToast: false,
+  });

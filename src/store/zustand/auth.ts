@@ -1,5 +1,7 @@
 import { create } from 'zustand';
-import type { AuthStatus, User } from '@/auth/jwt/types';
+import type { User } from '@/types/user';
+
+type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated';
 
 interface AuthState {
   /** Short-lived JWT. Memory only, so it is gone after a reload (the refresh cookie brings it back). */

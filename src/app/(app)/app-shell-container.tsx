@@ -9,7 +9,8 @@ import { NotificationBell } from '@/components/features/notifications/notificati
 import { PaletteTrigger } from '@/components/features/command-palette/palette-trigger';
 import { useUiStore } from '@/store/zustand/ui';
 import type { Notification } from '@/types/notification';
-import { useMarkAllNotificationsRead, useMarkNotificationRead, useNotifications } from './service';
+import { useLogout, useMarkAllNotificationsRead, useMarkNotificationRead, useNotifications } from './service';
+import { UserMenu } from '@/components/layouts/user-menu';
 import CommandCenterContainer from './command-center-container';
 
 /** Signed-in shell: waits for the session, then shows sidebar + top bar around the page. */
@@ -26,6 +27,7 @@ function Shell({ children }: { children: ReactNode }) {
   const notifications = useNotifications(1, 10);
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
+  const logout = useLogout();
   const setCommandOpen = useUiStore((state) => state.setCommandOpen);
 
   const openNotification = (notification: Notification) => {
@@ -45,6 +47,7 @@ function Shell({ children }: { children: ReactNode }) {
             onOpen={openNotification}
             onMarkAllRead={() => markAllRead.mutate()}
           />
+          <UserMenu onSignOut={() => logout.mutate()} />
         </>
       }
     >

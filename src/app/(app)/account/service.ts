@@ -1,19 +1,23 @@
 import { useApiMutation } from '@/hooks/api-hooks';
-import type { ChangePasswordRequest, UpdateProfileRequest, User } from '@/auth/jwt/types';
+import { useAuthStore } from '@/store/zustand/auth';
+import type { User } from '@/types/user';
 
-/** Save my profile (name). */
+/** Save my profile (name) and update the signed-in user in the auth store. */
 export const useUpdateProfile = (onDone: () => void) =>
-  useApiMutation<User, UpdateProfileRequest>({
+  useApiMutation<User, { name: string }>({
     method: 'PUT',
     path: 'auth/profile',
     successMessage: 'Profile saved',
     errorToast: false,
-    onSuccess: onDone,
+    onSuccess: (user) => {
+      useAuthStore.getState().setUser(user);
+      onDone();
+    },
   });
 
 /** Change my password. */
 export const useChangePassword = (onDone: () => void) =>
-  useApiMutation<void, ChangePasswordRequest>({
+  useApiMutation<void, { currentPassword: string; newPassword: string }>({
     method: 'POST',
     path: 'auth/change-password',
     successMessage: 'Password changed',

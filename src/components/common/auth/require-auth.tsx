@@ -3,7 +3,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
-import { LOGIN_PATH } from '@/auth/jwt/config';
+import { LOGIN_PATH } from '@/config/navigation';
 
 interface RequireAuthProps {
   children: ReactNode;

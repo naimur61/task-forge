@@ -1,4 +1,6 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useApiMutation, useFetchData } from '@/hooks/api-hooks';
+import { useAuthStore } from '@/store/zustand/auth';
 import type { Notification } from '@/types/notification';
 import type { Paginated } from '@/types/common';
 import type { Project } from '@/types/project';
@@ -47,3 +49,19 @@ export const usePaletteProjects = (enabled: boolean) =>
     filterData: { status: 'ACTIVE', limit: 50 },
     enabled,
   });
+
+/** Sign out: tell the API, then always clear the local session and every cached response. */
+export const useLogout = () => {
+  const queryClient = useQueryClient();
+  const finish = () => {
+    useAuthStore.getState().clearSession(true);
+    queryClient.clear();
+  };
+  return useApiMutation<void, void>({
+    method: 'POST',
+    path: 'auth/logout',
+    errorToast: false,
+    onSuccess: finish,
+    onError: finish,
+  });
+};

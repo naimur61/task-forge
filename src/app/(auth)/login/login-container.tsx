@@ -7,16 +7,18 @@ import { LogIn } from 'lucide-react';
 import { useZodForm } from '@/components/common/forms/hooks/use-form';
 import { getErrorMessage, isApiError } from '@/lib/http/api-error';
 import { useAuth } from '@/hooks/use-auth';
-import { safeRedirectPath } from '@/auth/jwt/config';
-import { loginSchema } from '@/auth/jwt/validators';
+import { safeRedirectPath } from '@/config/navigation';
+import { loginSchema } from '@/components/common/forms/schemas/auth';
 import { AuthCard } from '@/components/features/auth/auth-card';
 import { LoginForm } from '@/components/features/auth/login-form';
 import { DEMO_PASSWORD, DemoHint } from '@/components/features/auth/demo-hint';
+import { useLogin } from './service';
 
 export default function LoginContainer() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, status } = useAuth();
+  const { status } = useAuth();
+  const login = useLogin();
   const [error, setError] = useState<string | null>(null);
   const redirectTo = safeRedirectPath(searchParams.get('next'));
 
@@ -30,7 +32,7 @@ export default function LoginContainer() {
   const onSubmit = form.handleSubmit(async (values) => {
     setError(null);
     try {
-      await login(values);
+      await login.mutateAsync(values);
       router.replace(redirectTo);
     } catch (e) {
       setError(isApiError(e) && e.status === 401 ? 'Incorrect email or password.' : getErrorMessage(e));

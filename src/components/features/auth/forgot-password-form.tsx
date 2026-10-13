@@ -1,7 +1,7 @@
 import type { UseFormReturn } from 'react-hook-form';
 import { CustomField } from '@/components/common/fields/cus-input-field';
 import { ActionButton } from '@/components/common/button';
-import type { ForgotPasswordFormData } from '@/auth/jwt/validators';
+import type { ForgotPasswordFormData } from '@/components/common/forms/schemas/auth';
 import { ErrorAlert } from '@/components/common/error-alert/error-alert';
 
 interface ForgotPasswordFormProps {
@@ -16,7 +16,15 @@ export function ForgotPasswordForm({ form, onSubmit, isLoading, error }: ForgotP
   return (
     <form onSubmit={onSubmit} className="space-y-4" noValidate>
       <ErrorAlert error={error} />
-      <CustomField.Text form={form} name="email" type="email" autoComplete="email" labelName="Email" placeholder="name@example.com" required />
+      <CustomField.Text
+        form={form}
+        name="email"
+        type="email"
+        autoComplete="email"
+        labelName="Email"
+        placeholder="name@example.com"
+        required
+      />
       <ActionButton type="submit" size="lg" fullWidth isPending={isLoading} loadingContent="Sending…">
         Send reset link
       </ActionButton>

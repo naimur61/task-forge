@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { ActionButton } from '@/components/common/button';
@@ -11,22 +10,21 @@ import { PageHeader } from '@/components/common/page-header/page-header';
 import { UserAvatar } from '@/components/common/user-avatar/user-avatar';
 import { PasswordForm, ProfileForm, SettingsCard } from '@/components/features/account/account-forms';
 import { ThemePicker } from '@/components/features/account/theme-picker';
-import { LOGIN_PATH } from '@/auth/jwt/config';
 import { useAuth } from '@/hooks/use-auth';
 import { applyServerErrors } from '@/lib/http/form-errors';
+import { useLogout } from '../service';
 import { useChangePassword, useUpdateProfile } from './service';
 
 export default function AccountContainer() {
-  const router = useRouter();
   const queryClient = useQueryClient();
-  const { user, logout, refreshUser } = useAuth();
+  const { user } = useAuth();
+  const logout = useLogout();
 
   // Profile
   const [profileError, setProfileError] = useState<string | null>(null);
   const profileForm = useZodForm(profileSchema, { defaultValues: { name: user?.name ?? '' } });
   // Names show up on tasks and comments, so refresh everything after a rename.
   const updateProfile = useUpdateProfile(() => {
-    void refreshUser();
     void queryClient.invalidateQueries();
   });
 
@@ -59,11 +57,7 @@ export default function AccountContainer() {
     }
   });
 
-  const signOut = async () => {
-    await logout();
-    queryClient.clear();
-    router.replace(LOGIN_PATH);
-  };
+  const signOut = () => logout.mutate();
 
   if (!user) return null;
 
@@ -98,7 +92,12 @@ export default function AccountContainer() {
       </SettingsCard>
 
       <SettingsCard title="Password" description="Use at least 8 characters with a letter and a number.">
-        <PasswordForm form={passwordForm} onSubmit={onPasswordSubmit} isPending={changePassword.isPending} error={passwordError} />
+        <PasswordForm
+          form={passwordForm}
+          onSubmit={onPasswordSubmit}
+          isPending={changePassword.isPending}
+          error={passwordError}
+        />
       </SettingsCard>
 
       <SettingsCard title="Appearance" description="Choose how TaskForge looks on this device.">

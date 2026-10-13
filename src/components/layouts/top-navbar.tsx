@@ -6,7 +6,6 @@ import { Menu } from 'lucide-react';
 import { useLayout } from '@/providers/layout-provider';
 import { siteConfig } from '@/config/site';
 import { ThemeToggle } from './theme-toggle';
-import { UserMenu } from './user-menu';
 import { BrandMark } from './brand-mark';
 
 interface TopNavbarProps {
@@ -40,7 +39,6 @@ export function TopNavbar({ actions }: TopNavbarProps) {
         <div className="flex items-center gap-1">
           {actions}
           <ThemeToggle />
-          <UserMenu />
         </div>
       </div>
     </header>

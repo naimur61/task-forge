@@ -6,18 +6,19 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { CircleCheck, KeyRound, TriangleAlert } from 'lucide-react';
 import { useZodForm } from '@/components/common/forms/hooks/use-form';
 import { getErrorMessage } from '@/lib/http/api-error';
-import { LOGIN_PATH } from '@/auth/jwt/config';
-import { resetPasswordSchema } from '@/auth/jwt/validators';
+import { LOGIN_PATH } from '@/config/navigation';
+import { resetPasswordSchema } from '@/components/common/forms/schemas/auth';
 import { AuthCard } from '@/components/features/auth/auth-card';
 import { AuthMessage } from '@/components/features/auth/auth-message';
 import { ResetPasswordForm } from '@/components/features/auth/reset-password-form';
-import { resetPasswordService } from './service';
+import { useResetPassword } from './service';
 
 const REDIRECT_DELAY_MS = 3000;
 
 export default function ResetPasswordContainer() {
   const router = useRouter();
   const token = useSearchParams().get('token');
+  const resetPassword = useResetPassword();
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const form = useZodForm(resetPasswordSchema, { defaultValues: { password: '', confirmPassword: '' } });
@@ -33,7 +34,7 @@ export default function ResetPasswordContainer() {
     if (!token) return;
     setError(null);
     try {
-      await resetPasswordService.setNewPassword(token, password);
+      await resetPassword.mutateAsync({ token, password });
       setDone(true);
     } catch (e) {
       setError(getErrorMessage(e));

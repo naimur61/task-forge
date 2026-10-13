@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, type ReactNode } from 'react';
-import { refreshUser } from '@/hooks/use-auth';
+import { loadSession } from '@/lib/http/auth-fetch';
 
-/** Restores the session once when the app loads. Session state itself lives in the Zustand auth store. */
+/** Restores the session once when the app loads. Session state lives in the Zustand auth store. */
 export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
-    void refreshUser();
+    void loadSession();
   }, []);
 
   return children;
