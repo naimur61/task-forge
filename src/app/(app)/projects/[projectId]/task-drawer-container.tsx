@@ -29,7 +29,7 @@ import {
 } from './service';
 
 /** "New task" dialog (`?newTask=STATUS`) and the task drawer (`?task=ID`), shared by every project tab. */
-export default function TaskPanelsContainer({ project }: { project: Project }) {
+export default function TaskDrawerContainer({ project }: { project: Project }) {
   const url = useUrlState();
   const newTaskStatus = url.get('newTask') as TaskStatus | undefined;
   const openTaskId = url.get('task');
@@ -111,7 +111,13 @@ function CreateTaskPanel({
 
 /* ---------- Task drawer ---------- */
 
-function TaskDrawerPanel({ project, taskId, members, labels, onClose }: PanelProps & { taskId: string | undefined; onClose: () => void }) {
+function TaskDrawerPanel({
+  project,
+  taskId,
+  members,
+  labels,
+  onClose,
+}: PanelProps & { taskId: string | undefined; onClose: () => void }) {
   const { user } = useAuth();
   const userId = user?.id ?? '';
   const [formError, setFormError] = useState<string | null>(null);

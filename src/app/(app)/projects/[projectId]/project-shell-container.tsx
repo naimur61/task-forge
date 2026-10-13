@@ -13,7 +13,7 @@ import { useUrlState } from '@/hooks/ui/use-url-state';
 import { isApiError } from '@/lib/http/api-error';
 import { can } from '@/lib/permissions';
 import { useProject } from './service';
-import TaskPanelsContainer from './task-panels-container';
+import TaskDrawerContainer from './task-drawer-container';
 
 interface ProjectShellContainerProps {
   projectId: string;
@@ -57,7 +57,7 @@ export default function ProjectShellContainer({ projectId, children }: ProjectSh
 
       <div>{children}</div>
 
-      {project && <TaskPanelsContainer project={project} />}
+      {project && <TaskDrawerContainer project={project} />}
     </div>
   );
 }
