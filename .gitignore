@@ -12,8 +12,8 @@ next-env.d.ts
 *.tsbuildinfo
 
 # env files (commit .env.example only)
-# .env
-# .env*.local
+.env
+.env*.local
 
 # git hook internals (recreated by `npm install`)
 .husky/_

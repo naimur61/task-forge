@@ -1,102 +1,13 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { isApiError } from '@/lib/http/api-error';
-import { authApi, refreshSession } from '@/auth/jwt/client';
-import { SESSION_EXPIRED_EVENT } from '@/auth/jwt/config';
-import { clearTokens, getAccessToken, setTokens } from '@/auth/jwt/token-storage';
-import type { AuthResponse, AuthStatus, LoginRequest, RegisterRequest, User } from '@/auth/jwt/types';
+import { useEffect, type ReactNode } from 'react';
+import { refreshUser } from '@/hooks/use-auth';
 
-interface AuthContextValue {
-  user: User | null;
-  status: AuthStatus;
-  isAuthenticated: boolean;
-  /** True after the user chose to sign out (so the login page does not need a `next` link back). */
-  signedOutByUser: boolean;
-  /** Sign in; resolves with the user, rejects with ApiError (e.g. 401 wrong credentials). */
-  login: (credentials: LoginRequest) => Promise<User>;
-  /** Create an account and sign in. */
-  register: (data: RegisterRequest) => Promise<User>;
-  /** Sign out on the server (best effort) and clear local session state. */
-  logout: () => Promise<void>;
-  /** Re-fetch the current user (e.g. after a profile update). */
-  refreshUser: () => Promise<User | null>;
-}
-
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-
+/** Restores the session once when the app loads. Session state itself lives in the Zustand auth store. */
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [status, setStatus] = useState<AuthStatus>('loading');
-  const [signedOutByUser, setSignedOutByUser] = useState(false);
-
-  const signedOut = useCallback(() => {
-    setUser(null);
-    setStatus('unauthenticated');
-  }, []);
-
-  const applySession = useCallback((res: AuthResponse) => {
-    setTokens({ accessToken: res.accessToken, refreshToken: res.refreshToken });
-    setUser(res.user);
-    setStatus('authenticated');
-    setSignedOutByUser(false);
-    return res.user;
-  }, []);
-
-  const refreshUser = useCallback(async () => {
-    // The access token only lives in memory: after a reload, trade the refresh cookie for a new one.
-    if (!getAccessToken() && !(await refreshSession())) {
-      signedOut();
-      return null;
-    }
-    try {
-      const me = await authApi.me();
-      setUser(me);
-      setStatus('authenticated');
-      return me;
-    } catch (error) {
-      if (isApiError(error) && (error.status === 401 || error.status === 403)) clearTokens();
-      signedOut();
-      return null;
-    }
-  }, [signedOut]);
-
-  // Restore the session on first load.
   useEffect(() => {
     void refreshUser();
-  }, [refreshUser]);
+  }, []);
 
-  // authFetch fires this when a refresh fails — the session is over.
-  useEffect(() => {
-    window.addEventListener(SESSION_EXPIRED_EVENT, signedOut);
-    return () => window.removeEventListener(SESSION_EXPIRED_EVENT, signedOut);
-  }, [signedOut]);
-
-  const login = useCallback(async (credentials: LoginRequest) => applySession(await authApi.login(credentials)), [applySession]);
-  const register = useCallback(async (data: RegisterRequest) => applySession(await authApi.register(data)), [applySession]);
-
-  const logout = useCallback(async () => {
-    try {
-      await authApi.logout();
-    } catch {
-      // The local session is cleared regardless of what the server says.
-    } finally {
-      setSignedOutByUser(true);
-      clearTokens();
-      signedOut();
-    }
-  }, [signedOut]);
-
-  const value = useMemo<AuthContextValue>(
-    () => ({ user, status, isAuthenticated: status === 'authenticated', signedOutByUser, login, register, logout, refreshUser }),
-    [user, status, signedOutByUser, login, register, logout, refreshUser],
-  );
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within AuthProvider');
-  return context;
+  return children;
 }

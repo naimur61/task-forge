@@ -6,7 +6,7 @@ export const AUTH_ENDPOINTS = {
   login: '/auth/login', // POST { email, password }        → AuthResponse
   register: '/auth/register', // POST { name, email, password } → AuthResponse
   logout: '/auth/logout', // POST
-  refresh: '/auth/refresh', // POST                          → { accessToken?, refreshToken? }
+  refresh: '/auth/refresh', // POST                          → { accessToken }
   me: '/auth/me', // GET                           → User
   forgotPassword: '/auth/forgot-password', // POST { email }
   resetPassword: '/auth/reset-password', // POST { token, password }
@@ -17,9 +17,6 @@ export const AUTH_ENDPOINTS = {
 /** Where signed-out users are sent, and where users land after signing in. */
 export const LOGIN_PATH = '/login';
 export const AFTER_LOGIN_PATH = '/dashboard';
-
-/** Fired on window when the session can no longer be refreshed. */
-export const SESSION_EXPIRED_EVENT = 'auth:session-expired';
 
 /**
  * Only allow same-site relative redirects (prevents open redirects via ?next=).

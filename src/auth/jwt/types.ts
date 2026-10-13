@@ -16,19 +16,14 @@ export interface RegisterRequest {
   password: string;
 }
 
-/**
- * What /auth/login and /auth/register return. Cookie strategies may omit the
- * tokens (they arrive as HttpOnly cookies instead).
- */
+/** What /auth/login and /auth/register return. The refresh token arrives as an HttpOnly cookie. */
 export interface AuthResponse {
   user: User;
   accessToken?: string;
-  refreshToken?: string;
 }
 
 export interface RefreshResponse {
   accessToken?: string;
-  refreshToken?: string;
 }
 
 export interface ResetPasswordRequest {

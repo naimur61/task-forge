@@ -1,13 +1,7 @@
 import { ApiError } from '@/lib/http/api-error';
 import { buildUrl, request, type RequestOptions } from '@/lib/http/request';
-import { AUTH_API_URL, AUTH_ENDPOINTS, SESSION_EXPIRED_EVENT } from './config';
-import {
-  USES_COOKIES,
-  clearTokens,
-  getAccessToken,
-  getRefreshToken,
-  setTokens,
-} from './token-storage';
+import { useAuthStore } from '@/store/zustand/auth';
+import { AUTH_API_URL, AUTH_ENDPOINTS } from './config';
 import type {
   AuthResponse,
   ChangePasswordRequest,
@@ -20,7 +14,13 @@ import type {
 } from './types';
 
 /** Endpoints where a 401 means "wrong credentials", never "expired session". */
-const NO_REFRESH = [AUTH_ENDPOINTS.login, AUTH_ENDPOINTS.register, AUTH_ENDPOINTS.refresh, AUTH_ENDPOINTS.forgotPassword, AUTH_ENDPOINTS.resetPassword];
+const NO_REFRESH = [
+  AUTH_ENDPOINTS.login,
+  AUTH_ENDPOINTS.register,
+  AUTH_ENDPOINTS.refresh,
+  AUTH_ENDPOINTS.forgotPassword,
+  AUTH_ENDPOINTS.resetPassword,
+];
 
 const urlOf = (input: RequestInfo | URL) =>
   typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
@@ -36,19 +36,16 @@ const REFRESH_RETRY_DELAY_MS = 800;
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function performRefresh(): Promise<boolean> {
-  const refreshToken = getRefreshToken();
-  if (!USES_COOKIES && !refreshToken) return false;
   for (let attempt = 0; attempt <= REFRESH_RETRIES; attempt++) {
     try {
       const res = await fetch(buildUrl(AUTH_API_URL, AUTH_ENDPOINTS.refresh), {
         method: 'POST',
-        headers: { Accept: 'application/json', ...(refreshToken ? { 'Content-Type': 'application/json' } : {}) },
-        body: refreshToken ? JSON.stringify({ refreshToken }) : undefined,
-        credentials: USES_COOKIES ? 'include' : 'same-origin',
+        headers: { Accept: 'application/json' },
+        credentials: 'include',
       });
       if (res.ok) {
         const data = (await res.json().catch(() => ({}))) as RefreshResponse;
-        setTokens(data);
+        if (data.accessToken) useAuthStore.getState().setAccessToken(data.accessToken);
         return true;
       }
       if (res.status < 500) return false; // 4xx: the session is really invalid
@@ -69,9 +66,9 @@ let inFlight: Promise<boolean> | null = null;
  */
 export function refreshSession(): Promise<boolean> {
   if (inFlight) return inFlight;
-  const tokenBefore = getAccessToken();
+  const tokenBefore = useAuthStore.getState().accessToken;
   const run = async () => {
-    const current = getAccessToken();
+    const current = useAuthStore.getState().accessToken;
     if (current && current !== tokenBefore) return true; // another tab already refreshed
     return performRefresh();
   };
@@ -85,11 +82,6 @@ export function refreshSession(): Promise<boolean> {
   return shared;
 }
 
-function notifySessionExpired() {
-  clearTokens();
-  if (typeof window !== 'undefined') window.dispatchEvent(new Event(SESSION_EXPIRED_EVENT));
-}
-
 /**
  * Drop-in `fetch` for calls to your API: attaches the access token (or sends
  * cookies), and on 401 refreshes the session once and retries the request.
@@ -97,9 +89,9 @@ function notifySessionExpired() {
 export const authFetch: typeof fetch = async (input, init = {}) => {
   const send = () => {
     const headers = new Headers(init.headers);
-    const token = getAccessToken();
+    const token = useAuthStore.getState().accessToken;
     if (token && !headers.has('Authorization')) headers.set('Authorization', `Bearer ${token}`);
-    return fetch(input, { ...init, headers, credentials: USES_COOKIES ? 'include' : init.credentials });
+    return fetch(input, { ...init, headers, credentials: 'include' });
   };
 
   const res = await send();
@@ -109,7 +101,8 @@ export const authFetch: typeof fetch = async (input, init = {}) => {
     const retried = await send();
     if (retried.status !== 401) return retried;
   }
-  notifySessionExpired();
+  // The session can no longer be refreshed: sign the user out.
+  useAuthStore.getState().clearSession();
   return res;
 };
 
@@ -120,10 +113,7 @@ const call = <T>(path: string, options?: RequestOptions) =>
 export const authApi = {
   login: (body: LoginRequest) => call<AuthResponse>(AUTH_ENDPOINTS.login, { method: 'POST', body }),
   register: (body: RegisterRequest) => call<AuthResponse>(AUTH_ENDPOINTS.register, { method: 'POST', body }),
-  logout: () => {
-    const refreshToken = getRefreshToken();
-    return call<void>(AUTH_ENDPOINTS.logout, { method: 'POST', body: refreshToken ? { refreshToken } : undefined });
-  },
+  logout: () => call<void>(AUTH_ENDPOINTS.logout, { method: 'POST' }),
   me: () => call<User>(AUTH_ENDPOINTS.me),
   forgotPassword: (email: string) => call<void>(AUTH_ENDPOINTS.forgotPassword, { method: 'POST', body: { email } }),
   resetPassword: (body: ResetPasswordRequest) => call<void>(AUTH_ENDPOINTS.resetPassword, { method: 'POST', body }),
