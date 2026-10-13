@@ -1,93 +1,42 @@
 'use client';
 
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableCaption,
-} from '@/components/ui/table';
-import { Loader2 } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 
-export type TableColumn = {
+export interface TableColumn<T> {
   key: string;
-  header: string;
+  header: ReactNode;
   className?: string;
-  render?: (item: any, index: number) => React.ReactNode;
-};
+  /** Cell content. Without it the row's `key` field is shown. */
+  render?: (row: T) => ReactNode;
+}
 
-export type TableConfig = {
-  columns: TableColumn[];
+interface DynamicTableProps<T> {
+  columns: TableColumn<T>[];
+  data: T[];
+  getRowId: (row: T) => string;
+  /** Makes rows clickable and keyboard-focusable (Enter opens). */
+  onRowClick?: (row: T) => void;
   emptyMessage?: string;
-  showPagination?: boolean;
-  rowClassName?: (item: any) => string;
-  renderExpandableRow?: (item: any, index: number) => React.ReactNode;
-};
-
-interface Pagination {
-  page: number;
-  total: number;
-  perPage?: number;
-  totalPages: number;
+  className?: string;
 }
 
-interface DynamicTableProps {
-  isLoading: boolean;
-  pagination?: Pagination;
-  currentPage?: number;
-  setCurrentPage?: (page: number) => void;
-  renderExpandedRow?: (item: any, index: number) => React.ReactNode;
-  config: TableConfig;
-  data: any;
-  isCheckBox?: boolean;
-  selectedIds?: string[];
-  setSelectedIds?: (ids: string[]) => void;
-  setSelectObject?: (data: any[]) => void;
-  pageName?: string;
-}
-
-export function DynamicTable({
-  data, isLoading, pagination, config,
-  selectedIds = [], setSelectedIds = () => {}, setSelectObject = () => {},
-  isCheckBox = false,
-}: DynamicTableProps) {
-  const isEmpty = !isLoading && (!data || data.length === 0);
-
-  const isRowSelected = (id: string) => selectedIds?.includes(id);
-
-  const toggleRowSelection = (id: string) => {
-    const newSelectedIds = isRowSelected(id)
-      ? selectedIds.filter((item) => item !== id)
-      : [...selectedIds, id];
-    setSelectedIds(newSelectedIds);
-    setSelectObject(data.filter((item: any) => newSelectedIds.includes(item.id)));
-  };
-
-  const toggleSelectAll = () => {
-    const allSelected = data?.every((item: any) => isRowSelected(item.id));
-    const newSelectedIds = allSelected ? [] : data.map((item: any) => item.id);
-    setSelectedIds(newSelectedIds);
-    setSelectObject(allSelected ? [] : data);
-  };
-
+/** Table driven by a column list. Used for every table in the app. */
+export function DynamicTable<T>({
+  columns,
+  data,
+  getRowId,
+  onRowClick,
+  emptyMessage = 'No data available',
+  className,
+}: DynamicTableProps<T>) {
   return (
-    <div className="rounded-md border">
+    <div className={cn('overflow-hidden rounded-xl border border-border bg-card shadow-sm', className)}>
       <Table>
-        {pagination && pagination.totalPages > 0 && (
-          <TableCaption className="p-4">
-            {/* Pagination component rendered separately */}
-          </TableCaption>
-        )}
-        <TableHeader className="bg-muted/50">
-          <TableRow>
-            {isCheckBox && (
-              <TableHead className="w-10 pl-4">
-                <input
-                  type="checkbox"
-                  checked={data?.length > 0 && data?.every((item: any) => isRowSelected(item.id))}
-                  onChange={toggleSelectAll}
-                  aria-label="Select all rows"
-                  className="h-4 w-4"
-                />
-              </TableHead>
-            )}
-            {config.columns.map((column) => (
+        <TableHeader>
+          <TableRow className="hover:bg-transparent">
+            {columns.map((column) => (
               <TableHead key={column.key} className={column.className}>
                 {column.header}
               </TableHead>
@@ -95,37 +44,24 @@ export function DynamicTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isLoading ? (
+          {data.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={config.columns.length + (isCheckBox ? 1 : 0)} className="h-64 text-center">
-                <div className="flex items-center justify-center" role="status" aria-label="Loading">
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" aria-hidden="true" />
-                </div>
-              </TableCell>
-            </TableRow>
-          ) : isEmpty ? (
-            <TableRow>
-              <TableCell colSpan={config.columns.length + (isCheckBox ? 1 : 0)} className="h-64 text-center text-muted-foreground">
-                {config.emptyMessage || 'No data available'}
+              <TableCell colSpan={columns.length} className="h-32 text-center text-muted-foreground">
+                {emptyMessage}
               </TableCell>
             </TableRow>
           ) : (
-            data?.map((row: any, rowIndex: number) => (
-              <TableRow key={rowIndex} className={config.rowClassName?.(row)}>
-                {isCheckBox && (
-                  <TableCell className="pl-4">
-                    <input
-                      type="checkbox"
-                      checked={isRowSelected(row.id)}
-                      onChange={() => toggleRowSelection(row.id)}
-                      aria-label="Select row"
-                      className="h-4 w-4"
-                    />
-                  </TableCell>
-                )}
-                {config.columns.map((col, colIndex) => (
-                  <TableCell key={colIndex} className={col.className}>
-                    {col.render ? col.render(row, rowIndex) : row[col.key]}
+            data.map((row) => (
+              <TableRow
+                key={getRowId(row)}
+                onClick={onRowClick && (() => onRowClick(row))}
+                onKeyDown={onRowClick && ((e) => e.key === 'Enter' && onRowClick(row))}
+                tabIndex={onRowClick ? 0 : undefined}
+                className={cn(onRowClick && 'cursor-pointer focus-visible:bg-accent focus-visible:outline-none')}
+              >
+                {columns.map((column) => (
+                  <TableCell key={column.key} className={column.className}>
+                    {column.render ? column.render(row) : String((row as Record<string, unknown>)[column.key] ?? '')}
                   </TableCell>
                 ))}
               </TableRow>

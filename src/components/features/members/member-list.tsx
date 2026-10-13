@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { DynamicTable, type TableColumn } from '@/components/common/dynamic-table/dynamic-table';
 import { RoleBadge } from '@/components/features/projects/role-badge';
 import { formatShortDate } from '@/lib/date-utils/due';
 import type { Member } from '@/types/member';
@@ -46,7 +46,15 @@ const ACTION_LABELS: Record<MemberAction, { label: string; icon: typeof Crown; d
 };
 
 /** Menu with the allowed actions for one member. Hidden when there are none. */
-function MemberActions({ member, actions, onAction }: { member: Member; actions: MemberAction[]; onAction: MemberListProps['onAction'] }) {
+function MemberActions({
+  member,
+  actions,
+  onAction,
+}: {
+  member: Member;
+  actions: MemberAction[];
+  onAction: MemberListProps['onAction'];
+}) {
   if (actions.length === 0) return null;
   return (
     <DropdownMenu>
@@ -57,7 +65,9 @@ function MemberActions({ member, actions, onAction }: { member: Member; actions:
         <MoreHorizontal className="h-4 w-4" aria-hidden />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel className="truncate text-xs font-normal text-muted-foreground">{member.user.name}</DropdownMenuLabel>
+        <DropdownMenuLabel className="truncate text-xs font-normal text-muted-foreground">
+          {member.user.name}
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {actions.map((action) => {
           const info = ACTION_LABELS[action];
@@ -80,47 +90,43 @@ function MemberActions({ member, actions, onAction }: { member: Member; actions:
 
 /** Project members: a table on desktop, cards on phones. */
 export function MemberList({ members, currentUserId, myRole, onAction }: MemberListProps) {
+  const columns: TableColumn<Member>[] = [
+    {
+      key: 'user',
+      header: 'Member',
+      render: (member) => (
+        <div className="flex items-center gap-3">
+          <UserAvatar user={member.user} size="md" />
+          <div className="min-w-0">
+            <p className="truncate font-medium text-foreground">
+              {member.user.name}
+              {member.user.id === currentUserId && <span className="ml-1.5 text-xs text-muted-foreground">(you)</span>}
+            </p>
+            <p className="truncate text-sm text-muted-foreground">{member.user.email}</p>
+          </div>
+        </div>
+      ),
+    },
+    { key: 'role', header: 'Role', render: (member) => <RoleBadge role={member.role} /> },
+    {
+      key: 'joinedAt',
+      header: 'Joined',
+      className: 'text-sm text-muted-foreground',
+      render: (member) => formatShortDate(member.joinedAt),
+    },
+    {
+      key: 'actions',
+      header: <span className="sr-only">Actions</span>,
+      className: 'w-12',
+      render: (member) => (
+        <MemberActions member={member} actions={actionsFor(member, myRole, currentUserId)} onAction={onAction} />
+      ),
+    },
+  ];
+
   return (
     <>
-      <div className="hidden overflow-hidden rounded-xl border border-border bg-card shadow-sm md:block">
-        <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead>Member</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Joined</TableHead>
-              <TableHead className="w-12">
-                <span className="sr-only">Actions</span>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {members.map((member) => (
-              <TableRow key={member.id}>
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <UserAvatar user={member.user} size="md" />
-                    <div className="min-w-0">
-                      <p className="truncate font-medium text-foreground">
-                        {member.user.name}
-                        {member.user.id === currentUserId && <span className="ml-1.5 text-xs text-muted-foreground">(you)</span>}
-                      </p>
-                      <p className="truncate text-sm text-muted-foreground">{member.user.email}</p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <RoleBadge role={member.role} />
-                </TableCell>
-                <TableCell className="text-sm text-muted-foreground">{formatShortDate(member.joinedAt)}</TableCell>
-                <TableCell>
-                  <MemberActions member={member} actions={actionsFor(member, myRole, currentUserId)} onAction={onAction} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      <DynamicTable className="hidden md:block" columns={columns} data={members} getRowId={(member) => member.id} />
 
       <ul className="space-y-2 md:hidden">
         {members.map((member) => (
@@ -129,7 +135,9 @@ export function MemberList({ members, currentUserId, myRole, onAction }: MemberL
             <div className="min-w-0 flex-1">
               <p className="truncate font-medium text-foreground">
                 {member.user.name}
-                {member.user.id === currentUserId && <span className="ml-1.5 text-xs text-muted-foreground">(you)</span>}
+                {member.user.id === currentUserId && (
+                  <span className="ml-1.5 text-xs text-muted-foreground">(you)</span>
+                )}
               </p>
               <p className="truncate text-xs text-muted-foreground">{member.user.email}</p>
               <RoleBadge role={member.role} className="mt-1.5" />
